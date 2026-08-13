@@ -20,8 +20,23 @@
 }
 
 /* Identity */
+.cv-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cv-photo {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--bg);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
 .cv-identity h1 {
-  margin: 0 0 8px;
+  margin: 0;
   font-size: 2rem;
   font-weight: 700;
   letter-spacing: -0.03em;
@@ -193,6 +208,101 @@
   text-decoration: underline;
 }
 
+/* Password gate */
+.cv-password-gate {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg-soft);
+}
+
+.cv-password-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 32px;
+  text-align: center;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+}
+
+.cv-password-card > svg {
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.cv-password-card h1 {
+  margin: 0 0 6px;
+  font-size: 1.6rem;
+  letter-spacing: -0.02em;
+}
+
+.cv-password-subtitle {
+  margin: 0 0 24px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.cv-password-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cv-password-card input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-soft);
+  color: var(--text);
+}
+
+.cv-password-card input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.cv-password-card button {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.cv-password-card button:hover {
+  background: #1d4ed8;
+}
+
+.cv-password-error {
+  margin: 0;
+  color: #dc2626;
+  font-size: 0.85rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Responsive */
 @media (max-width: 760px) {
   .cv-layout {
@@ -216,6 +326,10 @@
 
 /* Print */
 @media print {
+  .cv-password-gate {
+    display: none;
+  }
+
   .cv-layout {
     grid-template-columns: 220px 1fr;
   }

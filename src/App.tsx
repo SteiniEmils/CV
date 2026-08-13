@@ -1,5 +1,31 @@
+import { useEffect, useState } from 'react'
 import { cv } from './data/cv'
+import photo from './assets/photo.jpg'
 import './App.css'
+
+const PASSWORD = 'SoldisEbba'
+const STORAGE_KEY = 'cv-unlocked'
+
+const LockIcon = () => (
+  <svg viewBox="0 0 24 24" width="48" height="48" aria-hidden="true">
+    <rect
+      x="5"
+      y="11"
+      width="14"
+      height="10"
+      rx="2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    />
+    <path
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      d="M8 11V7a4 4 0 0 1 8 0v4"
+    />
+  </svg>
+)
 
 const MailIcon = () => (
   <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
@@ -83,7 +109,68 @@ const ContactLink = ({
   </a>
 )
 
+function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
+  const [value, setValue] = useState('')
+  const [error, setError] = useState(false)
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (value === PASSWORD) {
+      localStorage.setItem(STORAGE_KEY, 'true')
+      onUnlock()
+    } else {
+      setError(true)
+    }
+  }
+
+  return (
+    <div className="cv-password-gate">
+      <div className="cv-password-card">
+        <LockIcon />
+        <h1>{cv.name}</h1>
+        <p className="cv-password-subtitle">Private CV — password required</p>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="password" className="sr-only">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            value={value}
+            onChange={(e) => {
+              setValue(e.target.value)
+              setError(false)
+            }}
+            placeholder="Enter password"
+            autoFocus
+          />
+          {error && (
+            <p className="cv-password-error">Incorrect password. Try again.</p>
+          )}
+          <button type="submit">Unlock</button>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 function App() {
+  const [unlocked, setUnlocked] = useState(() =>
+    typeof window !== 'undefined'
+      ? localStorage.getItem(STORAGE_KEY) === 'true'
+      : false
+  )
+
+  useEffect(() => {
+    if (localStorage.getItem(STORAGE_KEY) === 'true') {
+      setUnlocked(true)
+    }
+  }, [])
+
+  if (!unlocked) {
+    return <PasswordGate onUnlock={() => setUnlocked(true)} />
+  }
+
   const websiteLabel = cv.website.replace(/^https?:\/\//, '')
   const githubHandle = cv.github.replace(/^https?:\/\/github\.com\//, '')
 
@@ -92,6 +179,7 @@ function App() {
       <div className="cv-layout">
         <aside className="cv-sidebar">
           <div className="cv-identity">
+            <img className="cv-photo" src={photo} alt={cv.name} />
             <h1>{cv.name}</h1>
             <p className="cv-title">{cv.title}</p>
           </div>
