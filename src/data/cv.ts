@@ -1,23 +1,47 @@
 // Edit this file with your own details.
 
+export type Experience = {
+  company: string
+  role: string
+  start: string
+  end: string
+  description: string
+}
+
+export type Education = {
+  institution: string
+  degree: string
+  start: string
+  end: string
+}
+
+export type Project = {
+  name: string
+  description: string
+  url: string
+  tech: string
+}
+
 export const cv = {
   name: 'Thorsteinn Emils',
-  title: 'Software Developer',
-  location: 'Your location',
+  title: 'Flutter & React Developer',
+  location: '',
   email: 'thorsteinnemils@gmail.com',
   github: 'https://github.com/SteiniEmils',
-  website: '',
+  website: 'https://steiniemils.com',
   linkedin: '',
   summary:
-    'Pragmatic software developer with a passion for building clean, user-friendly applications. Experienced in mobile and full-stack development, with a focus on Flutter, Dart, React, and TypeScript.',
+    'Mobile-first developer who builds cross-platform apps with Flutter and Dart, and modern web interfaces with React and TypeScript. Comfortable working across the stack — from PostgreSQL and native mobile tooling to self-hosting and shipping apps on real devices.',
   skills: [
-    'TypeScript',
-    'React',
     'Flutter',
     'Dart',
-    'Node.js',
+    'React',
+    'TypeScript',
+    'PostgreSQL',
+    'C++',
     'Git',
     'Linux',
+    'Node.js',
     'Coolify',
   ],
   experience: [
@@ -43,13 +67,20 @@ export const cv = {
       name: 'MEMM',
       description: 'make more moments',
       url: 'https://github.com/SteiniEmils/MEMM',
-      tech: 'Dart',
+      tech: 'Dart, Flutter, PostgreSQL, C++',
     },
     {
       name: 'minngr_app',
-      description: '',
+      description: 'Personal Flutter project for managing things on the go.',
       url: 'https://github.com/SteiniEmils/minngr_app',
-      tech: 'Dart',
+      tech: 'Dart, Flutter, PostgreSQL, C++',
+    },
+    {
+      name: 'steiniemils.com',
+      description:
+        'This personal CV website — built with React, TypeScript, Vite, Docker, and deployed on a self-hosted Coolify instance.',
+      url: 'https://github.com/SteiniEmils/CV',
+      tech: 'React, TypeScript, Vite, Docker, Coolify',
     },
   ],
 } as const
