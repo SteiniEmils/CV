@@ -33,11 +33,11 @@ export type SkillCategory = {
 }
 
 export const cv = {
-  "name": "Thorsteinn Emils",
+  "name": "Þorsteinn Emilsson",
   "title": "Flutter & React Developer",
-  "location": "",
+  "location": "Iceland",
   "email": "thorsteinnemils@gmail.com",
-  "phone": "",
+  "phone": "+354 8677880",
   "github": "https://github.com/SteiniEmils",
   "website": "https://steiniemils.com",
   "linkedin": "",
