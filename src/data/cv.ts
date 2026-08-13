@@ -22,11 +22,22 @@ export type Project = {
   tech: string
 }
 
+export type Stat = {
+  value: string
+  label: string
+}
+
+export type SkillCategory = {
+  category: string
+  items: string[]
+}
+
 export const cv = {
   name: 'Thorsteinn Emils',
   title: 'Flutter & React Developer',
   location: '',
   email: 'thorsteinnemils@gmail.com',
+  phone: '',
   github: 'https://github.com/SteiniEmils',
   website: 'https://steiniemils.com',
   linkedin: '',
@@ -43,6 +54,11 @@ export const cv = {
     'Linux',
     'Node.js',
     'Coolify',
+  ],
+  skillCategories: [
+    { category: 'Software', items: ['Flutter', 'Dart', 'React', 'TypeScript'] },
+    { category: 'Cloud & Infrastructure', items: ['Linux', 'Node.js', 'Coolify'] },
+    { category: 'Data & Tools', items: ['PostgreSQL', 'C++', 'Git'] },
   ],
   experience: [
     {
@@ -82,5 +98,11 @@ export const cv = {
       url: 'https://github.com/SteiniEmils/CV',
       tech: 'React, TypeScript, Vite, Docker, Coolify',
     },
+  ],
+  stats: [
+    { value: '3+', label: 'Projects Shipped' },
+    { value: '5+', label: 'Years Coding' },
+    { value: '∞', label: 'Continuous Learning' },
+    { value: '100%', label: 'Self-Hosting Curious' },
   ],
 } as const
