@@ -15,7 +15,7 @@ const adminDir = path.join(__dirname, 'admin')
 const distDir = path.join(__dirname, '..', 'dist')
 const loginHtml = path.join(adminDir, 'login.html')
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'cv-admin'
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || process.env.Admin_key || 'cv-admin'
 const isDev = process.env.NODE_ENV !== 'production'
 const cookieOptions = {
   httpOnly: true,
