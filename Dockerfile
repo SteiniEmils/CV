@@ -9,11 +9,22 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Serve stage
-FROM nginx:alpine
+# Runtime stage
+FROM node:22-alpine
 
-COPY --from=build /app/dist /usr/share/nginx/html
+WORKDIR /app
+ENV NODE_ENV=production
 
-EXPOSE 80
+COPY package*.json ./
+RUN npm ci --omit=dev
 
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/data ./data
+COPY --from=build /app/scripts ./scripts
+COPY --from=build /app/server ./server
+COPY --from=build /app/src/data/cv.ts ./src/data/cv.ts
+COPY --from=build /app/package.json ./
+
+EXPOSE 3000
+
+CMD ["node", "server/index.js"]

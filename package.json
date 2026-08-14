@@ -11,6 +11,7 @@
     "generate-cv": "node scripts/generate-cv.js",
     "prebuild": "npm run generate-cv",
     "predev": "npm run generate-cv",
+    "start": "node server/index.js",
     "server": "npm run generate-cv && node server/index.js"
   },
   "dependencies": {
