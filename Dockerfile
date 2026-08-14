@@ -28,4 +28,4 @@ COPY --from=build /app/package.json ./
 
 EXPOSE 80
 
-CMD ["node", "server/index.js"]
+CMD ["sh", "-c", "PORT=80 exec node server/index.js"]
