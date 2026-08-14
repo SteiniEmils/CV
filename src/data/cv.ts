@@ -103,7 +103,7 @@ export const cv = {
       "name": "MEMM",
       "description": "make more moments",
       "url": "https://github.com/SteiniEmils/MEMM",
-      "tech": "Dart, Flutter, PostgreSQL, C++"
+      "tech": "Dart, Flutter, PostgreSQL, "
     },
     {
       "name": "minngr_app",

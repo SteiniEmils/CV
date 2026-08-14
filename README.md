@@ -29,7 +29,7 @@ In Coolify:
 
 1. Create a new resource from this GitHub repository.
 2. Choose **Dockerfile** as the build method.
-3. Expose port `3000`.
+3. Keep the default exposed port (`80`).
 4. Add an environment variable `ADMIN_PASSWORD` and set it to a strong password.
 5. Point your domain to the resource.
 6. Visit `https://your-domain.com/admin` and log in with the `ADMIN_PASSWORD`.

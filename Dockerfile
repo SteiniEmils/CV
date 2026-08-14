@@ -14,7 +14,7 @@ FROM node:22-alpine
 
 WORKDIR /app
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=80
 
 COPY package*.json ./
 RUN npm ci --omit=dev
@@ -26,6 +26,6 @@ COPY --from=build /app/server ./server
 COPY --from=build /app/src/data/cv.ts ./src/data/cv.ts
 COPY --from=build /app/package.json ./
 
-EXPOSE 3000
+EXPOSE 80
 
 CMD ["node", "server/index.js"]
