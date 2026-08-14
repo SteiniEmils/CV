@@ -1,105 +1,136 @@
 {
   "name": "Þorsteinn Emilsson",
-  "title": "Flutter & React Developer",
+  "title": "Technical Project Coordinator · Developer · Electrician",
   "location": "Iceland",
-  "email": "thorsteinnemils@gmail.com",
+  "email": "steini@steiniemils.com",
   "phone": "+354 8677880",
   "github": "https://github.com/SteiniEmils",
   "website": "https://steiniemils.com",
-  "linkedin": "",
-  "summary": "Mobile-first developer who builds cross-platform apps with Flutter and Dart, and modern web interfaces with React and TypeScript. Comfortable working across the stack — from PostgreSQL and native mobile tooling to self-hosting and shipping apps on real devices.",
+  "linkedin": "https://www.linkedin.com/in/steinemils",
+  "summary": "Technical professional combining hands-on electrical and EV-charging experience with software development, web technology, digital operations, and project coordination. Experienced with customer communication, job estimation, materials planning, and the installation of 300+ EV chargers in residential and industrial settings. Builds modern applications with Flutter, Dart, React and TypeScript, works with PostgreSQL and Linux, and is comfortable deploying and self-hosting software.",
   "skills": [
+    "Technical Project Coordination",
+    "Operations & Job Estimation",
+    "Customer Communication",
+    "EV Charging Infrastructure",
+    "Electrical Work",
     "Flutter",
     "Dart",
     "React",
     "TypeScript",
     "PostgreSQL",
-    "C++",
-    "Git",
     "Linux",
+    "Docker",
+    "Coolify",
+    "Git",
     "Node.js",
-    "Coolify"
+    "HTML / CSS",
+    "WordPress",
+    "Shopify",
+    "Photoshop",
+    "Branding & Digital Marketing",
+    "AI Tools / ChatGPT"
   ],
   "skillCategories": [
     {
-      "category": "Software",
+      "category": "Technical & Operations",
+      "items": [
+        "Technical Project Coordination",
+        "Operations",
+        "Customer Communication",
+        "Job Estimation",
+        "Materials Planning",
+        "Electrical Work",
+        "EV Charging Infrastructure"
+      ]
+    },
+    {
+      "category": "Software Development",
       "items": [
         "Flutter",
         "Dart",
         "React",
-        "TypeScript"
+        "TypeScript",
+        "PostgreSQL",
+        "Node.js",
+        "Git"
       ]
     },
     {
       "category": "Cloud & Infrastructure",
       "items": [
         "Linux",
-        "Node.js",
-        "Coolify"
+        "Docker",
+        "Coolify",
+        "Self-hosting",
+        "Cloudflare"
       ]
     },
     {
-      "category": "Data & Tools",
+      "category": "Web & Digital",
       "items": [
-        "PostgreSQL",
-        "C++",
-        "Git"
+        "HTML / CSS",
+        "WordPress",
+        "Shopify",
+        "Photoshop",
+        "Branding",
+        "Digital Marketing",
+        "AI Tools / ChatGPT"
       ]
     }
   ],
   "experience": [
     {
-      "company": "Your Company",
-      "role": "Your Role",
-      "start": "20xx",
+      "company": "Electrical & EV Charging",
+      "role": "Electrician / EV Charging Technician",
+      "start": "—",
       "end": "Present",
-      "description": "Describe your responsibilities and achievements here. Replace this placeholder with your real experience."
+      "description": "Hands-on electrical work including residential and industrial EV-charger installations. Installed 300+ EV chargers, worked directly with customers, estimated jobs, and managed materials and installation requirements."
     }
   ],
-  "education": [
-    {
-      "institution": "Your School",
-      "degree": "Your Degree",
-      "start": "20xx",
-      "end": "20xx"
-    }
-  ],
+  "education": [],
   "projects": [
     {
-      "name": "MEMM",
-      "description": "make more moments",
-      "url": "https://github.com/SteiniEmils/MEMM",
-      "tech": "Dart, Flutter, PostgreSQL, "
-    },
-    {
-      "name": "minngr_app",
-      "description": "Personal Flutter project for managing things on the go.",
+      "name": "MINNGR",
+      "description": "NFC-enabled digital memory platform for turning trips and experiences into interactive presentations containing photos, videos, maps, captions and timelines.",
       "url": "https://github.com/SteiniEmils/minngr_app",
-      "tech": "Dart, Flutter, PostgreSQL, C++"
+      "tech": "Flutter, Dart, Supabase, PostgreSQL, NFC, GitHub"
     },
     {
-      "name": "steiniemils.com",
-      "description": "This personal CV website — built with React, TypeScript, Vite, Docker, and deployed on a self-hosted Coolify instance.",
+      "name": "SteiniEmils CV",
+      "description": "Personal technical portfolio and CV application, designed for self-hosted deployment with a modern React/Vite frontend and Coolify infrastructure.",
       "url": "https://github.com/SteiniEmils/CV",
-      "tech": "React, TypeScript, Vite, Docker, Coolify"
+      "tech": "React, TypeScript, Vite, Docker, Coolify, Linux, Cloudflare"
+    },
+    {
+      "name": "SHAMBA",
+      "description": "Branding, product and digital marketing project for a skincare brand inspired by Kenyan heritage.",
+      "url": "https://steiniemils.com",
+      "tech": "Branding, Photoshop, Product Development, Digital Marketing"
+    },
+    {
+      "name": "Land og Synir",
+      "description": "Branding and visual design project involving professional marketing material and digital creative work.",
+      "url": "https://steiniemils.com",
+      "tech": "Photoshop, Branding, Graphic Design, Marketing"
     }
   ],
   "stats": [
     {
-      "value": "3+",
-      "label": "Projects Shipped"
+      "value": "300+",
+      "label": "EV Chargers Installed"
     },
     {
-      "value": "5+",
-      "label": "Years Coding"
+      "value": "16+",
+      "label": "Years Using Photoshop"
     },
     {
-      "value": "∞",
-      "label": "Continuous Learning"
+      "value": "Flutter + React",
+      "label": "Development Stack"
     },
     {
-      "value": "100%",
-      "label": "Self-Hosting Curious"
+      "value": "Self-Hosted",
+      "label": "Cloud & Deployment"
     }
   ]
 }
