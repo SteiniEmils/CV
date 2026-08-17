@@ -1,61 +1,239 @@
+import crypto from 'crypto'
+import { execFile } from 'child_process'
 import express from 'express'
 import fs from 'fs'
 import path from 'path'
-import { exec } from 'child_process'
 import { fileURLToPath } from 'url'
+import { generateCv } from '../scripts/generate-cv.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const rootDir = path.join(__dirname, '..')
 const app = express()
 
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 
-const dataPath = path.join(__dirname, '..', 'data', 'cv.json')
+const dataDir = path.join(rootDir, 'data')
+const dataPath = path.join(dataDir, 'cv.json')
+const dataSeedPath = path.join(rootDir, 'data-seed', 'cv.json')
 const adminDir = path.join(__dirname, 'admin')
-const distDir = path.join(__dirname, '..', 'dist')
+const distDir = path.join(rootDir, 'dist')
 const loginHtml = path.join(adminDir, 'login.html')
+const viteBin = path.join(rootDir, 'node_modules', 'vite', 'bin', 'vite.js')
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || process.env.Admin_key || 'cv-admin'
-const isDev = process.env.NODE_ENV !== 'production'
+const SESSION_COOKIE = 'cv_session'
+const BUILD_TIMEOUT_MS = 90_000
+const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000
+const isProduction = process.env.NODE_ENV === 'production'
+const isDev = !isProduction
+
+if (isProduction) {
+  const missing = ['ADMIN_PASSWORD', 'SESSION_SECRET'].filter((name) => !process.env[name]?.trim())
+  if (missing.length) {
+    console.error(`Fatal: ${missing.join(' and ')} must be set in production. Refusing to start.`)
+    process.exit(1)
+  }
+}
+
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD?.trim() || (isDev ? 'cv-admin' : '')
+const SESSION_SECRET = process.env.SESSION_SECRET?.trim() || (isDev ? crypto.randomBytes(32).toString('hex') : '')
+
+if (isProduction && ADMIN_PASSWORD === 'cv-admin') {
+  console.error('Fatal: the development default password is not allowed in production. Set a strong ADMIN_PASSWORD.')
+  process.exit(1)
+}
+
+if (!isProduction && !process.env.ADMIN_PASSWORD?.trim()) {
+  console.warn('Warning: ADMIN_PASSWORD is unset; using the documented development default. Set ADMIN_PASSWORD before deploying.')
+}
+if (!isProduction && !process.env.SESSION_SECRET?.trim()) {
+  console.warn('Warning: SESSION_SECRET is unset; using an ephemeral development secret. Sessions reset on restart.')
+}
+
 const cookieOptions = {
   httpOnly: true,
   sameSite: 'lax',
   path: '/',
-  secure: !isDev,
-  maxAge: 7 * 24 * 60 * 60 * 1000
+  secure: isProduction,
+  maxAge: SESSION_TTL_MS
 }
 
-if (ADMIN_PASSWORD === 'cv-admin') {
-  console.warn('Warning: using default admin password. Set ADMIN_PASSWORD to something strong.')
-}
+const sessions = new Map()
+let saveChain = Promise.resolve()
 
 function parseCookies(req) {
   const header = req.headers.cookie || ''
-  return Object.fromEntries(header.split(';').filter(Boolean).map(c => {
-    const [k, ...rest] = c.trim().split('=')
-    return [k, decodeURIComponent(rest.join('='))]
-  }))
+  const out = {}
+  for (const part of header.split(';')) {
+    if (!part) continue
+    const [k, ...rest] = part.trim().split('=')
+    if (!k) continue
+    try {
+      out[k] = decodeURIComponent(rest.join('='))
+    } catch {
+      out[k] = rest.join('=')
+    }
+  }
+  return out
+}
+
+function sign(value) {
+  return crypto.createHmac('sha256', SESSION_SECRET).update(value).digest('hex')
+}
+
+function safeEqual(a, b) {
+  const left = Buffer.from(String(a), 'utf8')
+  const right = Buffer.from(String(b), 'utf8')
+  if (left.length !== right.length) return false
+  return crypto.timingSafeEqual(left, right)
+}
+
+function passwordMatches(input) {
+  const given = crypto.createHash('sha256').update(String(input ?? '')).digest()
+  const expected = crypto.createHash('sha256').update(ADMIN_PASSWORD).digest()
+  return crypto.timingSafeEqual(given, expected)
+}
+
+function pruneSessions() {
+  const now = Date.now()
+  for (const [id, session] of sessions) {
+    if (session.expiresAt <= now) sessions.delete(id)
+  }
+}
+
+function createSessionToken() {
+  pruneSessions()
+  const id = crypto.randomBytes(32).toString('hex')
+  const expiresAt = Date.now() + SESSION_TTL_MS
+  sessions.set(id, { expiresAt })
+  const payload = `${id}.${expiresAt}`
+  return `${payload}.${sign(payload)}`
+}
+
+function readSession(token) {
+  if (!token || typeof token !== 'string') return null
+  const parts = token.split('.')
+  if (parts.length !== 3) return null
+  const [id, expiresRaw, signature] = parts
+  const payload = `${id}.${expiresRaw}`
+  if (!safeEqual(sign(payload), signature)) return null
+  const expiresAt = Number(expiresRaw)
+  if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
+    sessions.delete(id)
+    return null
+  }
+  const stored = sessions.get(id)
+  if (!stored || stored.expiresAt !== expiresAt) return null
+  return { id, expiresAt }
 }
 
 function isAuthenticated(req) {
-  return parseCookies(req).cv_admin === '1'
+  return Boolean(readSession(parseCookies(req)[SESSION_COOKIE]))
 }
 
 function setAuthCookie(res) {
-  res.cookie('cv_admin', '1', cookieOptions)
+  res.cookie(SESSION_COOKIE, createSessionToken(), cookieOptions)
 }
 
 function clearAuthCookie(res) {
-  res.clearCookie('cv_admin', { path: '/' })
+  res.clearCookie(SESSION_COOKIE, {
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+    secure: isProduction
+  })
 }
 
-function generateCv() {
+function destroySession(token) {
+  const session = readSession(token)
+  if (session) sessions.delete(session.id)
+}
+
+function enqueueSave(task) {
+  const run = saveChain.then(task, task)
+  saveChain = run.then(() => undefined, () => undefined)
+  return run
+}
+
+function atomicWriteFile(filePath, contents) {
+  const dir = path.dirname(filePath)
+  fs.mkdirSync(dir, { recursive: true })
+  const tmp = path.join(dir, `.${path.basename(filePath)}.${process.pid}.tmp`)
+  fs.writeFileSync(tmp, contents)
+  try {
+    fs.renameSync(tmp, filePath)
+  } catch (err) {
+    if (err.code === 'EEXIST' || err.code === 'EPERM' || process.platform === 'win32') {
+      fs.copyFileSync(tmp, filePath)
+      fs.unlinkSync(tmp)
+    } else {
+      try { fs.unlinkSync(tmp) } catch {}
+      throw err
+    }
+  }
+}
+
+function swapDist(nextDir) {
+  const oldDir = path.join(rootDir, 'dist-old')
+  fs.rmSync(oldDir, { recursive: true, force: true })
+  try {
+    if (fs.existsSync(distDir)) fs.renameSync(distDir, oldDir)
+    fs.renameSync(nextDir, distDir)
+    fs.rmSync(oldDir, { recursive: true, force: true })
+  } catch (err) {
+    if (fs.existsSync(oldDir) && !fs.existsSync(distDir)) {
+      try { fs.renameSync(oldDir, distDir) } catch {}
+    }
+    throw err
+  }
+}
+
+function rebuildFrontend() {
+  if (!fs.existsSync(viteBin)) {
+    return Promise.reject(new Error('Vite is not installed; cannot rebuild the live site'))
+  }
+  generateCv()
+  const outDir = path.join(rootDir, 'dist-next')
+  fs.rmSync(outDir, { recursive: true, force: true })
   return new Promise((resolve, reject) => {
-    exec('npm run generate-cv', { cwd: path.join(__dirname, '..') }, (err, stdout) => {
-      if (err) return reject(err)
-      resolve(stdout)
-    })
+    execFile(
+      process.execPath,
+      [viteBin, 'build', '--outDir', 'dist-next'],
+      {
+        cwd: rootDir,
+        timeout: BUILD_TIMEOUT_MS,
+        maxBuffer: 10 * 1024 * 1024,
+        env: { ...process.env }
+      },
+      (err, stdout, stderr) => {
+        if (err) {
+          fs.rmSync(outDir, { recursive: true, force: true })
+          const timedOut = Boolean(err.killed)
+          const detail = String(stderr || err.message || '').trim()
+          reject(new Error(timedOut ? 'Site rebuild timed out' : (detail || 'Site rebuild failed')))
+          return
+        }
+        try {
+          swapDist(outDir)
+          resolve(stdout)
+        } catch (swapErr) {
+          fs.rmSync(outDir, { recursive: true, force: true })
+          reject(swapErr)
+        }
+      }
+    )
   })
+}
+
+function ensureDataFile() {
+  fs.mkdirSync(dataDir, { recursive: true })
+  if (fs.existsSync(dataPath)) return
+  if (!fs.existsSync(dataSeedPath)) {
+    console.error('Fatal: data/cv.json is missing and no seed file was found at data-seed/cv.json')
+    process.exit(1)
+  }
+  fs.copyFileSync(dataSeedPath, dataPath)
+  console.log('Initialized data/cv.json from seed')
 }
 
 function apiAuth(req, res, next) {
@@ -82,9 +260,24 @@ app.get('/api/cv', apiAuth, (req, res) => {
 
 app.post('/api/cv', apiAuth, async (req, res) => {
   try {
-    fs.writeFileSync(dataPath, JSON.stringify(req.body, null, 2))
-    await generateCv()
-    res.json({ ok: true })
+    const result = await enqueueSave(async () => {
+      atomicWriteFile(dataPath, JSON.stringify(req.body, null, 2) + '\n')
+      try {
+        await rebuildFrontend()
+        return { rebuilt: true }
+      } catch (err) {
+        return { rebuilt: false, error: err.message }
+      }
+    })
+    if (result.rebuilt) {
+      res.json({ ok: true, rebuilt: true })
+    } else {
+      res.status(500).json({
+        ok: true,
+        rebuilt: false,
+        error: result.error || 'Saved, but the live site rebuild failed'
+      })
+    }
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
@@ -96,7 +289,7 @@ app.get('/admin/login', (req, res) => {
 
 app.post('/admin/login', (req, res) => {
   const { password } = req.body || {}
-  if (password === ADMIN_PASSWORD) {
+  if (passwordMatches(password)) {
     setAuthCookie(res)
     res.redirect('/admin')
   } else {
@@ -105,6 +298,7 @@ app.post('/admin/login', (req, res) => {
 })
 
 app.post('/admin/logout', (req, res) => {
+  destroySession(parseCookies(req)[SESSION_COOKIE])
   clearAuthCookie(res)
   res.redirect('/admin/login')
 })
@@ -122,6 +316,24 @@ app.get('/', (req, res) => {
 })
 
 const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
-  console.log(`CV editor running on http://localhost:${PORT}/admin`)
+
+async function start() {
+  ensureDataFile()
+  if (isProduction) {
+    try {
+      console.log('Rebuilding site from data/cv.json…')
+      await rebuildFrontend()
+      console.log('Site rebuild complete')
+    } catch (err) {
+      console.error('Startup rebuild failed; serving existing dist:', err.message)
+    }
+  }
+  app.listen(PORT, () => {
+    console.log(`CV editor running on http://localhost:${PORT}/admin`)
+  })
+}
+
+start().catch((err) => {
+  console.error(err)
+  process.exit(1)
 })

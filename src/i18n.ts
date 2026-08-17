@@ -14,6 +14,7 @@ export type UIKey =
   | 'education'
   | 'languages'
   | 'references'
+  | 'availableOnRequest'
   | 'getInTouch'
   | 'buildingSolutions'
   | 'present'
@@ -33,6 +34,7 @@ export const ui: Record<Lang, Record<UIKey, string>> = {
     education: 'Education',
     languages: 'Languages',
     references: 'References',
+    availableOnRequest: 'Available on request',
     getInTouch: 'Get in touch',
     buildingSolutions: 'Building solutions, delivering results.',
     present: 'Present',
@@ -51,6 +53,7 @@ export const ui: Record<Lang, Record<UIKey, string>> = {
     education: 'Menntun',
     languages: 'Tungumál',
     references: 'Meðmæli',
+    availableOnRequest: 'Fást sé óskað',
     getInTouch: 'Hafa samband',
     buildingSolutions: 'Lausnir sem skila árangri.',
     present: 'Núverandi',

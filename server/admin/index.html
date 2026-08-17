@@ -138,6 +138,8 @@
       transition: background 0.2s;
     }
     button:hover { background: var(--accent-hover); }
+    button:disabled { opacity: 0.65; cursor: wait; }
+    .toolbar form { margin: 0; }
     button.secondary {
       background: transparent;
       color: var(--text);
@@ -180,7 +182,10 @@
       <h1>CV Editor</h1>
       <div class="toolbar">
         <button class="secondary" onclick="window.open('/', '_blank')">View CV</button>
-        <button onclick="save()">Save changes</button>
+        <button id="save-btn" onclick="save()">Save changes</button>
+        <form method="POST" action="/admin/logout">
+          <button type="submit" class="secondary">Log out</button>
+        </form>
       </div>
     </div>
   </header>
@@ -390,18 +395,25 @@
       return (s || '').split(/[,\n]+/).map(x => x.trim()).filter(Boolean)
     }
 
-    function show(msg, isError) {
+    let statusTimer
+    function show(msg, isError, persist) {
       const status = document.getElementById('status')
       status.textContent = msg
       status.style.color = isError ? '#c0392b' : 'var(--text)'
       status.classList.add('show')
-      setTimeout(() => status.classList.remove('show'), 4000)
+      clearTimeout(statusTimer)
+      if (!persist) {
+        statusTimer = setTimeout(() => status.classList.remove('show'), 5000)
+      }
     }
 
     async function save() {
       const payload = JSON.parse(JSON.stringify(data))
       payload.skills = toArray(payload.skills)
       payload.skillCategories.forEach(c => c.items = toArray(c.items))
+      const btn = document.getElementById('save-btn')
+      if (btn) btn.disabled = true
+      show('Saving and updating the live site…', false, true)
 
       try {
         const res = await fetch('/api/cv', {
@@ -410,13 +422,17 @@
           body: JSON.stringify(payload)
         })
         const result = await res.json()
-        if (res.ok) {
-          show('Saved. Run npm run build when you want to update the live site.')
+        if (res.ok && result.rebuilt) {
+          show('Saved. Live site updated.')
+        } else if (result.ok) {
+          show('Saved, but the live site rebuild failed: ' + (result.error || 'unknown'), true)
         } else {
           show('Error: ' + (result.error || 'unknown'), true)
         }
       } catch (err) {
         show('Error: ' + err.message, true)
+      } finally {
+        if (btn) btn.disabled = false
       }
     }
 

@@ -34,7 +34,7 @@ export type SkillCategory = {
 
 export const cv = {
   "name": "Þorsteinn Emilsson",
-  "title": "Technical Project Coordinator · Developer · Electrician",
+  "title": "Electrician · Developer",
   "location": "Iceland",
   "email": "steini@steiniemils.com",
   "phone": "+354 8677880",
@@ -44,7 +44,7 @@ export const cv = {
   "summary": "Technical professional combining hands-on electrical and EV-charging experience with software development, web technology, digital operations, and project coordination. Experienced with customer communication, job estimation, materials planning, and the installation of 300+ EV chargers in residential and industrial settings. Builds modern applications with Flutter, Dart, React and TypeScript, works with PostgreSQL and Linux, and is comfortable deploying and self-hosting software.",
   "locales": {
     "is": {
-      "title": "Tæknilegur verkefnisstjóri · Forritari · Rafvirki",
+      "title": "Rafvirki · Forritari",
       "location": "Ísland",
       "summary": "Tæknilegur fagmaður með fjölbreytta reynslu úr rafvirkjastörfum og uppsetningu rafhleðslustöðva, ásamt forritun, veftækni, stafrænni rekstri og verkefnisstjórnun. Reynsla af viðskiptavinasamskiptum, kostnaðaráætlun, efnisstjórnun og uppsetningu á yfir 300 rafhleðslustöðvum í íbúðar- og iðnaðarumhverfi. Byggir nútímalegar smáforrits- og veflausnir með Flutter, Dart, React og TypeScript, vinnur með PostgreSQL og Linux og getur hýst og rekkið hugbúnað sjálfur.",
       "skills": [
@@ -401,8 +401,6 @@ export const cv = {
       "name": "Pálmi Gíslason",
       "role": "Manager",
       "company": "Ísorka",
-      "phone": "6202040",
-      "email": "palmi@isorka.is",
       "locales": {
         "is": {
           "role": "Yfirmaður"
@@ -413,8 +411,6 @@ export const cv = {
       "name": "Sigurður Ásgeirsson",
       "role": "CEO",
       "company": "Ísorka",
-      "phone": "8405769",
-      "email": "siggi@isorka.is",
       "locales": {
         "is": {
           "role": "Framkvæmdastjóri"

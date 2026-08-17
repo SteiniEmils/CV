@@ -283,8 +283,7 @@ function EducationLanguagesReferences() {
               <li key={r.name}>
                 <strong>{r.name}</strong>
                 <span>{r.role}, {r.company}</span>
-                <span>{r.phone}</span>
-                <a href={`mailto:${r.email}`}>{r.email}</a>
+                <span>{t('availableOnRequest')}</span>
               </li>
             )
           })}
@@ -355,7 +354,7 @@ function Footer() {
               </a>
             </li>
           )}
-          {cv.github && !cv.linkedin && (
+          {cv.github && (
             <li>
               <GithubIcon />
               <a href={cv.github} target="_blank" rel="noopener noreferrer">
