@@ -163,7 +163,7 @@ function atomicWriteFile(filePath, contents) {
   try {
     fs.renameSync(tmp, filePath)
   } catch (err) {
-    if (err.code === 'EEXIST' || err.code === 'EPERM' || process.platform === 'win32') {
+    if (err.code === 'EXDEV' || err.code === 'EEXIST' || err.code === 'EPERM' || process.platform === 'win32') {
       fs.copyFileSync(tmp, filePath)
       fs.unlinkSync(tmp)
     } else {
@@ -173,16 +173,76 @@ function atomicWriteFile(filePath, contents) {
   }
 }
 
+function distHasIndex(dir) {
+  return fs.existsSync(path.join(dir, 'index.html'))
+}
+
+function isCrossDeviceError(err) {
+  return Boolean(err && (err.code === 'EXDEV' || err.code === 'EPERM' || err.code === 'EBUSY'))
+}
+
+function copyDir(src, dest) {
+  fs.mkdirSync(dest, { recursive: true })
+  fs.cpSync(src, dest, { recursive: true, force: true })
+}
+
+function restoreLiveDist(fromDir) {
+  if (!distHasIndex(fromDir)) return false
+  copyDir(fromDir, distDir)
+  return distHasIndex(distDir)
+}
+
+function recoverLiveDist() {
+  if (distHasIndex(distDir)) return true
+  const oldDir = path.join(rootDir, 'dist-old')
+  const nextDir = path.join(rootDir, 'dist-next')
+  if (distHasIndex(oldDir) && restoreLiveDist(oldDir)) {
+    console.warn('Restored dist from dist-old after failed rebuild')
+    return true
+  }
+  if (distHasIndex(nextDir) && restoreLiveDist(nextDir)) {
+    console.warn('Installed dist-next in place after failed swap')
+    return true
+  }
+  return distHasIndex(distDir)
+}
+
 function swapDist(nextDir) {
+  if (!distHasIndex(nextDir)) {
+    throw new Error('Rebuild output is missing index.html')
+  }
+
   const oldDir = path.join(rootDir, 'dist-old')
   fs.rmSync(oldDir, { recursive: true, force: true })
+
   try {
     if (fs.existsSync(distDir)) fs.renameSync(distDir, oldDir)
     fs.renameSync(nextDir, distDir)
     fs.rmSync(oldDir, { recursive: true, force: true })
+    return
   } catch (err) {
-    if (fs.existsSync(oldDir) && !fs.existsSync(distDir)) {
-      try { fs.renameSync(oldDir, distDir) } catch {}
+    if (!isCrossDeviceError(err)) {
+      if (!distHasIndex(distDir)) {
+        try { restoreLiveDist(oldDir) } catch {}
+      }
+      throw err
+    }
+  }
+
+  // Cross-device: never rename/delete live dist first. Copy the new build over it in place.
+  try {
+    if (distHasIndex(distDir) && !distHasIndex(oldDir)) {
+      copyDir(distDir, oldDir)
+    }
+    copyDir(nextDir, distDir)
+    if (!distHasIndex(distDir)) {
+      throw new Error('Cross-device dist copy produced no index.html')
+    }
+    fs.rmSync(nextDir, { recursive: true, force: true })
+    fs.rmSync(oldDir, { recursive: true, force: true })
+  } catch (err) {
+    if (!distHasIndex(distDir)) {
+      try { restoreLiveDist(oldDir) } catch {}
     }
     throw err
   }
@@ -198,7 +258,7 @@ function rebuildFrontend() {
   return new Promise((resolve, reject) => {
     execFile(
       process.execPath,
-      [viteBin, 'build', '--outDir', 'dist-next'],
+      [viteBin, 'build', '--outDir', outDir, '--emptyOutDir'],
       {
         cwd: rootDir,
         timeout: BUILD_TIMEOUT_MS,
@@ -217,7 +277,9 @@ function rebuildFrontend() {
           swapDist(outDir)
           resolve(stdout)
         } catch (swapErr) {
-          fs.rmSync(outDir, { recursive: true, force: true })
+          if (distHasIndex(distDir)) {
+            fs.rmSync(outDir, { recursive: true, force: true })
+          }
           reject(swapErr)
         }
       }
@@ -311,8 +373,15 @@ app.get('/admin', adminAuth, (req, res) => {
 
 app.use(express.static(distDir))
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(distDir, 'index.html'))
+app.get('/', (req, res, next) => {
+  const index = path.join(distDir, 'index.html')
+  if (!fs.existsSync(index)) {
+    res.status(503).type('text/plain').send('Site build is unavailable.')
+    return
+  }
+  res.sendFile(index, (err) => {
+    if (err) next(err)
+  })
 })
 
 const PORT = process.env.PORT || 3000
@@ -326,10 +395,14 @@ async function start() {
       console.log('Site rebuild complete')
     } catch (err) {
       console.error('Startup rebuild failed; serving existing dist:', err.message)
+      recoverLiveDist()
+      if (!distHasIndex(distDir)) {
+        console.error('No usable dist/index.html to serve after failed rebuild')
+      }
     }
   }
-  app.listen(PORT, () => {
-    console.log(`CV editor running on http://localhost:${PORT}/admin`)
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`CV editor running on http://0.0.0.0:${PORT}/admin`)
   })
 }
 
