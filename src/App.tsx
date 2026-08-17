@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { cv } from './data/cv'
+import { useLanguage } from './useLanguage.ts'
+import { localize, type UIKey } from './i18n.ts'
 import photo from './assets/photo.jpg'
 import './App.css'
 
 type Theme = 'dark' | 'light'
 
-const STORAGE_KEY = 'cv-theme'
+const THEME_KEY = 'cv-theme'
 
 const DownloadIcon = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -48,6 +50,12 @@ const LinkedInIcon = () => (
   </svg>
 )
 
+const PhoneIcon = () => (
+  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13 1.05.37 2.08.72 3.06a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.02-1.32a2 2 0 0 1 2.11-.45c.98.35 2.01.59 3.06.72A2 2 0 0 1 22 16.92z" />
+  </svg>
+)
+
 const SunIcon = () => (
   <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="5" />
@@ -61,12 +69,10 @@ const MoonIcon = () => (
   </svg>
 )
 
-const navLinks = ['About', 'Experience', 'Skills', 'Projects', 'Contact']
-
 function useTheme(): [Theme, () => void] {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === 'undefined') return 'dark'
-    const saved = localStorage.getItem(STORAGE_KEY) as Theme | null
+    const saved = localStorage.getItem(THEME_KEY) as Theme | null
     if (saved) return saved
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   })
@@ -74,7 +80,7 @@ function useTheme(): [Theme, () => void] {
   useEffect(() => {
     if (typeof window === 'undefined') return
     document.documentElement.dataset.theme = theme
-    localStorage.setItem(STORAGE_KEY, theme)
+    localStorage.setItem(THEME_KEY, theme)
   }, [theme])
 
   const toggle = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
@@ -82,6 +88,16 @@ function useTheme(): [Theme, () => void] {
 }
 
 function Header({ theme, onToggle }: { theme: Theme; onToggle: () => void }) {
+  const { lang, setLang, t } = useLanguage()
+
+  const nav: { id: string; key: UIKey }[] = [
+    { id: 'about', key: 'about' },
+    { id: 'experience', key: 'experience' },
+    { id: 'skills', key: 'skills' },
+    { id: 'projects', key: 'projects' },
+    { id: 'contact', key: 'contact' },
+  ]
+
   return (
     <header className="cv-header">
       <a href="#" className="cv-logo">
@@ -89,41 +105,25 @@ function Header({ theme, onToggle }: { theme: Theme; onToggle: () => void }) {
         <span className="cv-logo-name">{cv.name}</span>
       </a>
       <nav className="cv-nav">
-        {navLinks.map((link) => (
-          <a key={link} href={`#${link.toLowerCase()}`} className="cv-nav-link">
-            {link}
+        {nav.map((link) => (
+          <a key={link.id} href={`#${link.id}`} className="cv-nav-link">
+            {t(link.key)}
           </a>
         ))}
       </nav>
-      <button className="cv-theme-toggle" onClick={onToggle} aria-label="Toggle theme">
-        {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-      </button>
+      <div className="cv-header-actions">
+        <button
+          className="cv-lang-toggle"
+          onClick={() => setLang(lang === 'en' ? 'is' : 'en')}
+          aria-label={lang === 'en' ? 'Switch to Icelandic' : 'Switch to English'}
+        >
+          {lang === 'en' ? 'IS' : 'EN'}
+        </button>
+        <button className="cv-theme-toggle" onClick={onToggle} aria-label="Toggle theme">
+          {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+        </button>
+      </div>
     </header>
-  )
-}
-
-function Hero() {
-  return (
-    <section className="cv-hero" id="about">
-      <div className="cv-hero-content">
-        <span className="cv-eyebrow">{cv.title}</span>
-        <h1 className="cv-hero-name">{cv.name}</h1>
-        <p className="cv-hero-summary">{cv.summary}</p>
-        <div className="cv-hero-actions">
-          <button className="cv-button cv-button-primary" onClick={() => window.print()}>
-            <DownloadIcon />
-            Download CV
-          </button>
-          <a className="cv-button cv-button-outline" href={`mailto:${cv.email}`}>
-            Contact me
-            <ArrowIcon />
-          </a>
-        </div>
-      </div>
-      <div className="cv-hero-image">
-        <img src={photo} alt={cv.name} />
-      </div>
-    </section>
   )
 }
 
@@ -131,25 +131,59 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="cv-section-title">{children}</h2>
 }
 
+function Hero() {
+  const { lang, t } = useLanguage()
+  const profile = localize(cv as Record<string, unknown>, lang) as typeof cv
+
+  return (
+    <section className="cv-hero" id="about">
+      <div className="cv-hero-content">
+        <span className="cv-eyebrow">{profile.title}</span>
+        <h1 className="cv-hero-name">{profile.name}</h1>
+        <p className="cv-hero-summary">{profile.summary}</p>
+        <div className="cv-hero-actions">
+          <button className="cv-button cv-button-primary" onClick={() => window.print()}>
+            <DownloadIcon />
+            {t('download')}
+          </button>
+          <a className="cv-button cv-button-outline" href={`mailto:${cv.email}`}>
+            {t('contactMe')}
+            <ArrowIcon />
+          </a>
+        </div>
+      </div>
+      <div className="cv-hero-image">
+        <img src={photo} alt={profile.name} />
+      </div>
+    </section>
+  )
+}
+
 function AboutSkills() {
+  const { lang, t } = useLanguage()
+  const profile = localize(cv as Record<string, unknown>, lang) as typeof cv
+
   return (
     <section className="cv-section cv-two-col" id="skills">
       <div className="cv-card">
-        <SectionTitle>About Me</SectionTitle>
-        <p>{cv.summary}</p>
+        <SectionTitle>{t('aboutMe')}</SectionTitle>
+        <p>{profile.summary}</p>
         <a href={`mailto:${cv.email}`} className="cv-link">
-          Learn more <ArrowIcon />
+          {t('contactMe')} <ArrowIcon />
         </a>
       </div>
       <div className="cv-card">
-        <SectionTitle>Technical Skills</SectionTitle>
+        <SectionTitle>{t('technicalSkills')}</SectionTitle>
         <div className="cv-skills-grid">
-          {cv.skillCategories?.map((group) => (
-            <div key={group.category} className="cv-skill-group">
-              <h3>{group.category}</h3>
-              <p>{group.items.join(' • ')}</p>
-            </div>
-          ))}
+          {profile.skillCategories?.map((group) => {
+            const localizedGroup = localize(group as Record<string, unknown> & typeof group, lang)
+            return (
+              <div key={localizedGroup.category} className="cv-skill-group">
+                <h3>{localizedGroup.category}</h3>
+                <p>{localizedGroup.items.join(' • ')}</p>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>
@@ -157,72 +191,148 @@ function AboutSkills() {
 }
 
 function Experience() {
+  const { lang, t } = useLanguage()
+
   return (
     <section className="cv-section cv-two-col" id="experience">
       <div className="cv-card">
-        <SectionTitle>Experience</SectionTitle>
+        <SectionTitle>{t('experience')}</SectionTitle>
         <div className="cv-timeline">
-          {cv.experience.map((exp) => (
-            <article className="cv-timeline-item" key={`${exp.company}-${exp.role}`}>
-              <h3>{exp.role}</h3>
-              <p className="cv-timeline-meta">
-                {exp.company} <span>•</span> {exp.start} – {exp.end}
-              </p>
-              <p>{exp.description}</p>
-            </article>
-          ))}
+          {cv.experience.map((exp, i) => {
+            const e = localize(exp as Record<string, unknown> & typeof exp, lang)
+            return (
+              <article className="cv-timeline-item" key={`${e.company}-${e.role}-${i}`}>
+                <h3>{e.role}</h3>
+                <p className="cv-timeline-meta">
+                  {e.company} <span>•</span> {e.start} – {e.end === 'Present' ? t('present') : e.end}
+                </p>
+                <p>{e.description}</p>
+              </article>
+            )
+          })}
         </div>
       </div>
       <div className="cv-card cv-featured" id="projects">
-        <SectionTitle>Featured Project</SectionTitle>
-        {cv.projects.slice(0, 1).map((project) => (
-          <article key={project.name}>
-            <h3>
-              <a href={project.url} target="_blank" rel="noopener noreferrer">
-                {project.name} <ArrowIcon />
-              </a>
-            </h3>
-            <p>{project.description}</p>
-            <div className="cv-featured-points">
-              {project.tech.split(',').map((t) => (
-                <span key={t.trim()} className="cv-featured-point">
-                  {t.trim()}
-                </span>
-              ))}
-            </div>
-          </article>
-        ))}
+        <SectionTitle>{t('projects')}</SectionTitle>
+        <div className="cv-projects-list">
+          {cv.projects.map((project) => {
+            const p = localize(project as Record<string, unknown> & typeof project, lang)
+            return (
+              <article className="cv-project-item" key={p.name}>
+                <h3>
+                  <a href={p.url} target="_blank" rel="noopener noreferrer">
+                    {p.name} <ArrowIcon />
+                  </a>
+                </h3>
+                <p>{p.description}</p>
+                <div className="cv-featured-points">
+                  {p.tech.split(',').map((tTech) => (
+                    <span key={`${p.name}-${tTech.trim()}`} className="cv-featured-point">
+                      {tTech.trim()}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function EducationLanguagesReferences() {
+  const { lang, t } = useLanguage()
+
+  return (
+    <section className="cv-section cv-two-col" id="education">
+      <div className="cv-card">
+        <SectionTitle>{t('education')}</SectionTitle>
+        <div className="cv-timeline">
+          {cv.education.map((edu, i) => {
+            const e = localize(edu as Record<string, unknown> & typeof edu, lang)
+            return (
+              <article className="cv-timeline-item" key={`${e.institution}-${e.degree}-${i}`}>
+                <h3>{e.degree}</h3>
+                <p className="cv-timeline-meta">
+                  {e.institution} <span>•</span> {e.start} – {e.end}
+                </p>
+              </article>
+            )
+          })}
+        </div>
+      </div>
+      <div className="cv-card cv-info">
+        <SectionTitle>{t('languages')}</SectionTitle>
+        <ul className="cv-language-list">
+          {cv.languages?.map((language) => {
+            const l = localize(language as Record<string, unknown> & typeof language, lang)
+            return (
+              <li key={l.name}>
+                <strong>{l.name}</strong>
+                <span>{l.proficiency}</span>
+              </li>
+            )
+          })}
+        </ul>
+        <SectionTitle>{t('references')}</SectionTitle>
+        <ul className="cv-reference-list">
+          {cv.references?.map((reference) => {
+            const r = localize(reference as Record<string, unknown> & typeof reference, lang)
+            return (
+              <li key={r.name}>
+                <strong>{r.name}</strong>
+                <span>{r.role}, {r.company}</span>
+                <span>{r.phone}</span>
+                <a href={`mailto:${r.email}`}>{r.email}</a>
+              </li>
+            )
+          })}
+        </ul>
       </div>
     </section>
   )
 }
 
 function Stats() {
+  const { lang } = useLanguage()
+
   return (
     <section className="cv-section cv-stats">
-      {cv.stats?.map((stat) => (
-        <div key={stat.label} className="cv-stat">
-          <span className="cv-stat-value">{stat.value}</span>
-          <span className="cv-stat-label">{stat.label}</span>
-        </div>
-      ))}
+      {cv.stats?.map((stat) => {
+        const s = localize(stat as Record<string, unknown> & typeof stat, lang)
+        return (
+          <div key={s.label} className="cv-stat">
+            <span className="cv-stat-value">{s.value}</span>
+            <span className="cv-stat-label">{s.label}</span>
+          </div>
+        )
+      })}
     </section>
   )
 }
 
 function Footer() {
+  const { t } = useLanguage()
+
   return (
     <footer className="cv-footer" id="contact">
       <div className="cv-footer-brand">
         <span className="cv-logo-mark">SE</span>
         <div>
           <strong>{cv.name}</strong>
-          <p>Building solutions, delivering results.</p>
+          <p>{t('buildingSolutions')}</p>
         </div>
       </div>
       <div className="cv-footer-contact">
-        <h3>Get in touch</h3>
+        <h3>{t('getInTouch')}</h3>
         <ul>
+          {cv.phone && (
+            <li>
+              <PhoneIcon />
+              <a href={`tel:${cv.phone.replace(/\s/g, '')}`}>{cv.phone}</a>
+            </li>
+          )}
           {cv.email && (
             <li>
               <MailIcon />
@@ -269,6 +379,7 @@ function App() {
         <Hero />
         <AboutSkills />
         <Experience />
+        <EducationLanguagesReferences />
         <Stats />
       </main>
       <Footer />

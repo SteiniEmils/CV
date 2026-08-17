@@ -42,6 +42,36 @@ export const cv = {
   "website": "https://steiniemils.com",
   "linkedin": "https://www.linkedin.com/in/steinemils",
   "summary": "Technical professional combining hands-on electrical and EV-charging experience with software development, web technology, digital operations, and project coordination. Experienced with customer communication, job estimation, materials planning, and the installation of 300+ EV chargers in residential and industrial settings. Builds modern applications with Flutter, Dart, React and TypeScript, works with PostgreSQL and Linux, and is comfortable deploying and self-hosting software.",
+  "locales": {
+    "is": {
+      "title": "Tæknilegur verkefnisstjóri · Forritari · Rafvirki",
+      "location": "Ísland",
+      "summary": "Tæknilegur fagmaður með fjölbreytta reynslu úr rafvirkjastörfum og uppsetningu rafhleðslustöðva, ásamt forritun, veftækni, stafrænni rekstri og verkefnisstjórnun. Reynsla af viðskiptavinasamskiptum, kostnaðaráætlun, efnisstjórnun og uppsetningu á yfir 300 rafhleðslustöðvum í íbúðar- og iðnaðarumhverfi. Byggir nútímalegar smáforrits- og veflausnir með Flutter, Dart, React og TypeScript, vinnur með PostgreSQL og Linux og getur hýst og rekkið hugbúnað sjálfur.",
+      "skills": [
+        "Tæknileg verkefnisstjórnun",
+        "Rekstur og kostnaðaráætlun",
+        "Viðskiptavinasamskipti",
+        "Rafhleðsluinnviðir",
+        "Rafvirkjastörf",
+        "Flutter",
+        "Dart",
+        "React",
+        "TypeScript",
+        "PostgreSQL",
+        "Linux",
+        "Docker",
+        "Coolify",
+        "Git",
+        "Node.js",
+        "HTML / CSS",
+        "WordPress",
+        "Shopify",
+        "Photoshop",
+        "Vörumerkjagerð og stafræn markaðssetning",
+        "Gervigreind / ChatGPT"
+      ]
+    }
+  },
   "skills": [
     "Technical Project Coordination",
     "Operations & Job Estimation",
@@ -70,13 +100,25 @@ export const cv = {
       "category": "Technical & Operations",
       "items": [
         "Technical Project Coordination",
-        "Operations",
+        "Operations & Job Estimation",
         "Customer Communication",
-        "Job Estimation",
         "Materials Planning",
         "Electrical Work",
         "EV Charging Infrastructure"
-      ]
+      ],
+      "locales": {
+        "is": {
+          "category": "Verkferli og tækni",
+          "items": [
+            "Tæknileg verkefnisstjórnun",
+            "Rekstur og kostnaðaráætlun",
+            "Viðskiptavinasamskipti",
+            "Efnisstjórnun",
+            "Rafvirkjastörf",
+            "Rafhleðsluinnviðir"
+          ]
+        }
+      }
     },
     {
       "category": "Software Development",
@@ -85,10 +127,36 @@ export const cv = {
         "Dart",
         "React",
         "TypeScript",
-        "PostgreSQL",
+        "JavaScript",
+        "C / C++",
+        "HTML / CSS",
         "Node.js",
+        "PostgreSQL",
+        ".NET",
+        "Drupal",
+        "Navision",
         "Git"
-      ]
+      ],
+      "locales": {
+        "is": {
+          "category": "Forritun og hugbúnaður",
+          "items": [
+            "Flutter",
+            "Dart",
+            "React",
+            "TypeScript",
+            "JavaScript",
+            "C / C++",
+            "HTML / CSS",
+            "Node.js",
+            "PostgreSQL",
+            ".NET",
+            "Drupal",
+            "Navision",
+            "Git"
+          ]
+        }
+      }
     },
     {
       "category": "Cloud & Infrastructure",
@@ -97,8 +165,24 @@ export const cv = {
         "Docker",
         "Coolify",
         "Self-hosting",
-        "Cloudflare"
-      ]
+        "Cloudflare",
+        "Windows",
+        "Mac OS"
+      ],
+      "locales": {
+        "is": {
+          "category": "Hýsing og umgjörð",
+          "items": [
+            "Linux",
+            "Docker",
+            "Coolify",
+            "Sjálfshýsing",
+            "Cloudflare",
+            "Windows",
+            "Mac OS"
+          ]
+        }
+      }
     },
     {
       "category": "Web & Digital",
@@ -109,62 +193,233 @@ export const cv = {
         "Photoshop",
         "Branding",
         "Digital Marketing",
+        "Email Marketing",
         "AI Tools / ChatGPT"
-      ]
+      ],
+      "locales": {
+        "is": {
+          "category": "Vefur, hönnun og markaðsfræði",
+          "items": [
+            "HTML / CSS",
+            "WordPress",
+            "Shopify",
+            "Photoshop",
+            "Vörumerkjagerð",
+            "Stafræn markaðssetning",
+            "Tölvupóstmarkaðssetning",
+            "Gervigreind / ChatGPT"
+          ]
+        }
+      }
     }
   ],
   "experience": [
     {
-      "company": "Electrical & EV Charging",
-      "role": "Electrician / EV Charging Technician",
-      "start": "—",
+      "company": "Ísorka",
+      "role": "Trainee / Electrician",
+      "start": "Feb 2022",
       "end": "Present",
-      "description": "Hands-on electrical work including residential and industrial EV-charger installations. Installed 300+ EV chargers, worked directly with customers, estimated jobs, and managed materials and installation requirements."
+      "description": "Installation of EV charging solutions for homes and businesses, plus general electrical work. Customer communication, site surveys, job estimation and materials planning.",
+      "locales": {
+        "is": {
+          "role": "Nemi / Rafvirki",
+          "description": "Uppsetning á hleðslulausnum fyrir heimili og fyrirtæki, ásamt alhliða raflagnavinna. Samskipti við viðskiptavini, vettvangsskoðanir, kostnaðaráætlun og efnisstjórnun."
+        }
+      }
+    },
+    {
+      "company": "Orkufell ehf",
+      "role": "Trainee Electrician",
+      "start": "Jun 2017",
+      "end": "Feb 2022",
+      "description": "General electrical work on a wide range of projects, including fiber-optic installations.",
+      "locales": {
+        "is": {
+          "role": "Nemi rafvirki",
+          "description": "Alhliða rafvirkjavinna í fjölbreyttum verkefnum, þar á meðal ljósleiðarauppsetningar."
+        }
+      }
+    },
+    {
+      "company": "Hjallastefnan",
+      "role": "Cook",
+      "start": "Jun 2008",
+      "end": "May 2017",
+      "description": "Professional kitchen work and food preparation for multiple locations.",
+      "locales": {
+        "is": {
+          "role": "Kokkur",
+          "description": "Fagleg eldhúsvinna og matarundirbúningur fyrir marga staði."
+        }
+      }
+    },
+    {
+      "company": "Exton",
+      "role": "AV Installation Specialist",
+      "start": "May 2000",
+      "end": "Aug 2007",
+      "description": "Specialist installation and configuration of audio, lighting and video equipment for events and venues.",
+      "locales": {
+        "is": {
+          "role": "Sérfræðingur",
+          "description": "Sérfræðingur við uppsetningu og stillingu á hljóð-, ljós- og myndbúnaði fyrir viðburði og staði."
+        }
+      }
     }
   ],
-  "education": [],
+  "education": [
+    {
+      "institution": "Fjölbrautaskólinn í Breiðholti",
+      "degree": "Electrical Trade Studies",
+      "start": "Jan 2014",
+      "end": "Dec 2022",
+      "locales": {
+        "is": {
+          "degree": "Rafiðn"
+        }
+      }
+    }
+  ],
   "projects": [
     {
       "name": "MINNGR",
       "description": "NFC-enabled digital memory platform for turning trips and experiences into interactive presentations containing photos, videos, maps, captions and timelines.",
       "url": "https://github.com/SteiniEmils/minngr_app",
-      "tech": "Flutter, Dart, Supabase, PostgreSQL, NFC, GitHub"
+      "tech": "Flutter, Dart, Supabase, PostgreSQL, NFC, GitHub",
+      "locales": {
+        "is": {
+          "description": "NFC-stýrð stafræn minnisvettvangur sem umbreyrir ferðum og upplifunum í gagnvirkar kynningar með myndum, myndböndum, kortum, skýringum og tímalínum."
+        }
+      }
     },
     {
       "name": "SteiniEmils CV",
       "description": "Personal technical portfolio and CV application, designed for self-hosted deployment with a modern React/Vite frontend and Coolify infrastructure.",
       "url": "https://github.com/SteiniEmils/CV",
-      "tech": "React, TypeScript, Vite, Docker, Coolify, Linux, Cloudflare"
+      "tech": "React, TypeScript, Vite, Docker, Coolify, Linux, Cloudflare",
+      "locales": {
+        "is": {
+          "description": "Persónuleg tæknileg ferilskrár- og vefsíðuforrit, hannað fyrir sjálfshýstan rekstur með nútímalegri React/Vite framenda og Coolify innviðum."
+        }
+      }
     },
     {
       "name": "SHAMBA",
       "description": "Branding, product and digital marketing project for a skincare brand inspired by Kenyan heritage.",
       "url": "https://steiniemils.com",
-      "tech": "Branding, Photoshop, Product Development, Digital Marketing"
+      "tech": "Branding, Photoshop, Product Development, Digital Marketing",
+      "locales": {
+        "is": {
+          "description": "Vörumerkjagerð, vöruþróun og stafræn markaðssetning fyrir húðvörumerki innblásið af kenýskri arfleifð."
+        }
+      }
     },
     {
       "name": "Land og Synir",
       "description": "Branding and visual design project involving professional marketing material and digital creative work.",
       "url": "https://steiniemils.com",
-      "tech": "Photoshop, Branding, Graphic Design, Marketing"
+      "tech": "Photoshop, Branding, Graphic Design, Marketing",
+      "locales": {
+        "is": {
+          "description": "Vörumerkjagerð og myndræn hönnun fagmenntaðra kynningarefna og stafræns hönnunarstarfs."
+        }
+      }
     }
   ],
   "stats": [
     {
       "value": "300+",
-      "label": "EV Chargers Installed"
+      "label": "EV Chargers Installed",
+      "locales": {
+        "is": {
+          "label": "Rafhleðslustöðvar uppsettar"
+        }
+      }
     },
     {
       "value": "16+",
-      "label": "Years Using Photoshop"
+      "label": "Years Using Photoshop",
+      "locales": {
+        "is": {
+          "label": "Ár með Photoshop"
+        }
+      }
     },
     {
       "value": "Flutter + React",
-      "label": "Development Stack"
+      "label": "Development Stack",
+      "locales": {
+        "is": {
+          "label": "Forritunarstakkur"
+        }
+      }
     },
     {
       "value": "Self-Hosted",
-      "label": "Cloud & Deployment"
+      "label": "Cloud & Deployment",
+      "locales": {
+        "is": {
+          "label": "Sjálfshýst ský og dreifing"
+        }
+      }
+    }
+  ],
+  "languages": [
+    {
+      "name": "Icelandic",
+      "proficiency": "Native",
+      "locales": {
+        "is": {
+          "name": "Íslenska",
+          "proficiency": "Móðurmál"
+        }
+      }
+    },
+    {
+      "name": "Swedish",
+      "proficiency": "Basic",
+      "locales": {
+        "is": {
+          "name": "Sænska",
+          "proficiency": "Grunnhæfni"
+        }
+      }
+    },
+    {
+      "name": "English",
+      "proficiency": "Fluent",
+      "locales": {
+        "is": {
+          "name": "Enska",
+          "proficiency": "Framúrskarandi"
+        }
+      }
+    }
+  ],
+  "references": [
+    {
+      "name": "Pálmi Gíslason",
+      "role": "Manager",
+      "company": "Ísorka",
+      "phone": "6202040",
+      "email": "palmi@isorka.is",
+      "locales": {
+        "is": {
+          "role": "Yfirmaður"
+        }
+      }
+    },
+    {
+      "name": "Sigurður Ásgeirsson",
+      "role": "CEO",
+      "company": "Ísorka",
+      "phone": "8405769",
+      "email": "siggi@isorka.is",
+      "locales": {
+        "is": {
+          "role": "Framkvæmdastjóri"
+        }
+      }
     }
   ]
 } as const
