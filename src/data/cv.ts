@@ -41,11 +41,13 @@ export const cv = {
   "github": "https://github.com/SteiniEmils",
   "website": "https://steiniemils.com",
   "linkedin": "https://www.linkedin.com/in/steinemils",
+  "hook": "300+ EV chargers installed across homes and industry. Flutter and React apps, self-hosted on Linux.",
   "summary": "Technical professional combining hands-on electrical and EV-charging experience with software development, web technology, digital operations, and project coordination. Experienced with customer communication, job estimation, materials planning, and the installation of 300+ EV chargers in residential and industrial settings. Builds modern applications with Flutter, Dart, React and TypeScript, works with PostgreSQL and Linux, and is comfortable deploying and self-hosting software.",
   "locales": {
     "is": {
       "title": "Rafvirki · Forritari",
       "location": "Ísland",
+      "hook": "Yfir 300 rafhleðslustöðvar uppsettar á heimilum og í iðnaði. Flutter- og React-forrit, sjálfshýst á Linux.",
       "summary": "Tæknilegur fagmaður með fjölbreytta reynslu úr rafvirkjastörfum og uppsetningu rafhleðslustöðva, ásamt forritun, veftækni, stafrænni rekstri og verkefnisstjórnun. Reynsla af viðskiptavinasamskiptum, kostnaðaráætlun, efnisstjórnun og uppsetningu á yfir 300 rafhleðslustöðvum í íbúðar- og iðnaðarumhverfi. Byggir nútímalegar smáforrits- og veflausnir með Flutter, Dart, React og TypeScript, vinnur með PostgreSQL og Linux og getur hýst og rekkið hugbúnað sjálfur.",
       "skills": [
         "Tæknileg verkefnisstjórnun",

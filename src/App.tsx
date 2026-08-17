@@ -198,7 +198,7 @@ function Hero() {
       <div className="cv-hero-content">
         <span className="cv-eyebrow">{profile.title}</span>
         <h1 className="cv-hero-name">{profile.name}</h1>
-        <p className="cv-hero-summary">{profile.summary}</p>
+        <p className="cv-hero-summary">{profile.hook}</p>
         <div className="cv-hero-actions">
           <button type="button" className="cv-button cv-button-primary" onClick={() => window.print()}>
             <PrintIcon />
