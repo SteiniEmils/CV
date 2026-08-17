@@ -9,11 +9,11 @@ type Theme = 'dark' | 'light'
 
 const THEME_KEY = 'cv-theme'
 
-const DownloadIcon = () => (
+const PrintIcon = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-    <path d="M7 10 12 15 17 10" />
-    <path d="M12 15V3" />
+    <path d="M6 9V2h12v7" />
+    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+    <path d="M6 14h12v8H6z" />
   </svg>
 )
 
@@ -142,9 +142,9 @@ function Hero() {
         <h1 className="cv-hero-name">{profile.name}</h1>
         <p className="cv-hero-summary">{profile.summary}</p>
         <div className="cv-hero-actions">
-          <button className="cv-button cv-button-primary" onClick={() => window.print()}>
-            <DownloadIcon />
-            {t('download')}
+          <button type="button" className="cv-button cv-button-primary" onClick={() => window.print()}>
+            <PrintIcon />
+            {t('print')}
           </button>
           <a className="cv-button cv-button-outline" href={`mailto:${cv.email}`}>
             {t('contactMe')}

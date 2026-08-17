@@ -6,7 +6,7 @@ export type UIKey =
   | 'skills'
   | 'projects'
   | 'contact'
-  | 'download'
+  | 'print'
   | 'contactMe'
   | 'aboutMe'
   | 'technicalSkills'
@@ -26,7 +26,7 @@ export const ui: Record<Lang, Record<UIKey, string>> = {
     skills: 'Skills',
     projects: 'Projects',
     contact: 'Contact',
-    download: 'Download CV',
+    print: 'Print',
     contactMe: 'Contact me',
     aboutMe: 'About Me',
     technicalSkills: 'Technical Skills',
@@ -45,7 +45,7 @@ export const ui: Record<Lang, Record<UIKey, string>> = {
     skills: 'Hæfni',
     projects: 'Verkefni',
     contact: 'Hafa samband',
-    download: 'Sækja ferilskrá',
+    print: 'Prenta',
     contactMe: 'Hafa samband',
     aboutMe: 'Um mig',
     technicalSkills: 'Tæknileg hæfni',
