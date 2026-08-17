@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { cv } from './data/cv'
 import { useLanguage } from './useLanguage.ts'
 import { localize, type UIKey } from './i18n.ts'
@@ -69,6 +69,18 @@ const MoonIcon = () => (
   </svg>
 )
 
+const MenuIcon = () => (
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+)
+
+const CloseIcon = () => (
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 6 6 18M6 6l12 12" />
+  </svg>
+)
+
 function useTheme(): [Theme, () => void] {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === 'undefined') return 'dark'
@@ -89,6 +101,8 @@ function useTheme(): [Theme, () => void] {
 
 function Header({ theme, onToggle }: { theme: Theme; onToggle: () => void }) {
   const { lang, setLang, t } = useLanguage()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const headerRef = useRef<HTMLElement>(null)
 
   const nav: { id: string; key: UIKey }[] = [
     { id: 'about', key: 'about' },
@@ -98,15 +112,49 @@ function Header({ theme, onToggle }: { theme: Theme; onToggle: () => void }) {
     { id: 'contact', key: 'contact' },
   ]
 
+  useEffect(() => {
+    if (!menuOpen) return
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false)
+    }
+    const onPointerDown = (event: PointerEvent) => {
+      if (!headerRef.current?.contains(event.target as Node)) {
+        setMenuOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      document.removeEventListener('pointerdown', onPointerDown)
+    }
+  }, [menuOpen])
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 760px)')
+    const onChange = (event: MediaQueryListEvent) => {
+      if (event.matches) setMenuOpen(false)
+    }
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
   return (
-    <header className="cv-header">
+    <header ref={headerRef} className={`cv-header${menuOpen ? ' is-nav-open' : ''}`}>
       <a href="#" className="cv-logo">
         <span className="cv-logo-mark">SE</span>
         <span className="cv-logo-name">{cv.name}</span>
       </a>
-      <nav className="cv-nav">
+      <nav id="cv-site-nav" className="cv-nav" aria-label={t('menu')}>
         {nav.map((link) => (
-          <a key={link.id} href={`#${link.id}`} className="cv-nav-link">
+          <a
+            key={link.id}
+            href={`#${link.id}`}
+            className="cv-nav-link"
+            onClick={() => setMenuOpen(false)}
+          >
             {t(link.key)}
           </a>
         ))}
@@ -121,6 +169,16 @@ function Header({ theme, onToggle }: { theme: Theme; onToggle: () => void }) {
         </button>
         <button className="cv-theme-toggle" onClick={onToggle} aria-label="Toggle theme">
           {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+        </button>
+        <button
+          type="button"
+          className="cv-menu-toggle"
+          aria-expanded={menuOpen}
+          aria-controls="cv-site-nav"
+          aria-label={t('menu')}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          {menuOpen ? <CloseIcon /> : <MenuIcon />}
         </button>
       </div>
     </header>

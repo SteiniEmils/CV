@@ -18,9 +18,10 @@
   top: 0;
   z-index: 50;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 16px 24px;
   padding: 20px 0;
   background: color-mix(in srgb, var(--bg) 90%, transparent);
   backdrop-filter: blur(8px);
@@ -30,6 +31,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
   text-decoration: none;
   font-weight: 700;
   color: var(--text);
@@ -48,6 +50,9 @@
 }
 
 .cv-logo-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   font-size: 0.9rem;
@@ -59,9 +64,26 @@
   gap: 28px;
 }
 
+.cv-header.is-nav-open .cv-nav {
+  display: flex;
+  flex-basis: 100%;
+  flex-direction: column;
+  order: 3;
+  gap: 4px;
+  padding: 8px 0 4px;
+  border-top: 1px solid var(--border);
+}
+
 @media (min-width: 760px) {
-  .cv-nav {
+  .cv-nav,
+  .cv-header.is-nav-open .cv-nav {
     display: flex;
+    flex-basis: auto;
+    flex-direction: row;
+    order: 0;
+    gap: 28px;
+    padding: 0;
+    border-top: none;
   }
 }
 
@@ -76,6 +98,13 @@
 
 .cv-nav-link:hover {
   color: var(--accent);
+}
+
+@media (max-width: 759px) {
+  .cv-header.is-nav-open .cv-nav-link {
+    display: block;
+    padding: 10px 4px;
+  }
 }
 
 .cv-theme-toggle {
@@ -99,8 +128,34 @@
 
 .cv-header-actions {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 10px;
+}
+
+.cv-menu-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cv-menu-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+@media (min-width: 760px) {
+  .cv-menu-toggle {
+    display: none;
+  }
 }
 
 .cv-lang-toggle {
@@ -604,6 +659,7 @@
   .cv-hero-actions,
   .cv-theme-toggle,
   .cv-lang-toggle,
+  .cv-menu-toggle,
   .cv-link {
     display: none !important;
   }

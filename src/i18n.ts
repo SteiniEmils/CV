@@ -18,6 +18,7 @@ export type UIKey =
   | 'getInTouch'
   | 'buildingSolutions'
   | 'present'
+  | 'menu'
 
 export const ui: Record<Lang, Record<UIKey, string>> = {
   en: {
@@ -38,6 +39,7 @@ export const ui: Record<Lang, Record<UIKey, string>> = {
     getInTouch: 'Get in touch',
     buildingSolutions: 'Building solutions, delivering results.',
     present: 'Present',
+    menu: 'Menu',
   },
   is: {
     about: 'Um mig',
@@ -57,6 +59,7 @@ export const ui: Record<Lang, Record<UIKey, string>> = {
     getInTouch: 'Hafa samband',
     buildingSolutions: 'Lausnir sem skila árangri.',
     present: 'Núverandi',
+    menu: 'Valmynd',
   },
 }
 
