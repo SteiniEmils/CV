@@ -116,6 +116,15 @@
       background: var(--bg);
       position: relative;
     }
+    .item.dragging { opacity: 0.45; }
+    .item.drag-over { border-color: var(--accent); }
+    .item-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 0 0 12px;
+    }
     .item-fields { display: flex; flex-direction: column; gap: 14px; }
     .field { display: flex; flex-direction: column; gap: 4px; }
     .row-4 {
@@ -154,12 +163,24 @@
     button.danger:hover { background: #c0392b; color: #fff; }
     button.add { margin-top: 12px; }
     button.remove {
-      position: absolute;
-      top: 8px;
-      right: 8px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      margin-left: auto;
+    }
+    button.icon-btn {
       padding: 6px 12px;
       font-size: 0.8rem;
     }
+    .drag-handle {
+      cursor: grab;
+      user-select: none;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      letter-spacing: 0.12em;
+    }
+    .drag-handle:hover { color: var(--text); border-color: var(--accent); background: transparent; }
+    .drag-handle:active { cursor: grabbing; }
     #status {
       position: fixed;
       bottom: 24px;
@@ -209,6 +230,7 @@
   <main>
     <div class="load" id="load">Loading CV…</div>
     <form id="editor" style="display:none">
+      <p class="hint" style="margin: 0 0 20px">In each list, drag the ⋮⋮ handle or use Up / Down to change order. Save to update the live site.</p>
       <section>
         <h2>Basics</h2>
         <div class="grid-2">
@@ -494,11 +516,15 @@
       const container = document.getElementById(section + '-list')
       const tpl = document.getElementById('tpl-' + section)
       container.innerHTML = ''
+      const total = data[section].length
 
       data[section].forEach((item, i) => {
         const el = tpl.content.cloneNode(true).firstElementChild
         el.dataset.section = section
         el.dataset.index = i
+
+        el.querySelector('.remove')?.remove()
+        el.prepend(makeItemActions(section, i, total))
 
         el.querySelectorAll('[data-key]').forEach(input => {
           input.dataset.section = section
@@ -508,8 +534,81 @@
             : (item[input.dataset.key] ?? '')
         })
 
+        bindDrag(el)
         container.appendChild(el)
       })
+    }
+
+    function makeItemActions(section, index, total) {
+      const actions = document.createElement('div')
+      actions.className = 'item-actions'
+      actions.innerHTML =
+        '<button type="button" class="icon-btn drag-handle" aria-label="Drag to reorder" title="Drag to reorder">⋮⋮</button>' +
+        '<button type="button" class="secondary icon-btn" ' + (index === 0 ? 'disabled ' : '') + 'onclick="moveItem(this, -1)">Up</button>' +
+        '<button type="button" class="secondary icon-btn" ' + (index === total - 1 ? 'disabled ' : '') + 'onclick="moveItem(this, 1)">Down</button>' +
+        '<button type="button" class="danger remove" onclick="removeItem(this)">Remove</button>'
+      return actions
+    }
+
+    function moveItem(btn, delta) {
+      const item = btn.closest('.item')
+      const section = item.dataset.section
+      const index = parseInt(item.dataset.index, 10)
+      const next = index + delta
+      if (next < 0 || next >= data[section].length) return
+      const [moved] = data[section].splice(index, 1)
+      data[section].splice(next, 0, moved)
+      renderSection(section)
+    }
+
+    let dragEl = null
+
+    function bindDrag(el) {
+      const handle = el.querySelector('.drag-handle')
+      if (!handle) return
+
+      handle.addEventListener('mousedown', () => { el.draggable = true })
+      handle.addEventListener('mouseup', () => { el.draggable = false })
+
+      el.addEventListener('dragstart', (event) => {
+        if (!el.draggable) {
+          event.preventDefault()
+          return
+        }
+        dragEl = el
+        el.classList.add('dragging')
+        event.dataTransfer.effectAllowed = 'move'
+        event.dataTransfer.setData('text/plain', el.dataset.index)
+      })
+
+      el.addEventListener('dragend', () => {
+        if (dragEl) syncOrder(el.dataset.section)
+        el.classList.remove('dragging')
+        el.draggable = false
+        dragEl = null
+        document.querySelectorAll('.item.drag-over').forEach((node) => node.classList.remove('drag-over'))
+      })
+
+      el.addEventListener('dragover', (event) => {
+        event.preventDefault()
+        if (!dragEl || dragEl === el || dragEl.dataset.section !== el.dataset.section) return
+        const rect = el.getBoundingClientRect()
+        const before = event.clientY < rect.top + rect.height / 2
+        el.parentElement.insertBefore(dragEl, before ? el : el.nextSibling)
+        el.classList.toggle('drag-over', before)
+      })
+
+      el.addEventListener('dragleave', () => el.classList.remove('drag-over'))
+    }
+
+    function syncOrder(section) {
+      const list = document.getElementById(section + '-list')
+      const next = [...list.querySelectorAll(':scope > .item')].map((node) => {
+        return data[section][parseInt(node.dataset.index, 10)]
+      })
+      if (next.some((item) => item === undefined)) return
+      data[section] = next
+      renderSection(section)
     }
 
     function update(el) {
