@@ -29,6 +29,12 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--bg);
+  color-scheme: light;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 body {
@@ -39,7 +45,48 @@ body {
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+html.theme-ready,
+html.theme-ready body,
+html.theme-ready .cv-header,
+html.theme-ready .cv-card,
+html.theme-ready .cv-stat,
+html.theme-ready .cv-footer,
+html.theme-ready .cv-button,
+html.theme-ready .cv-theme-toggle,
+html.theme-ready .cv-lang-toggle,
+html.theme-ready .cv-menu-toggle,
+html.theme-ready .cv-logo-mark,
+html.theme-ready .cv-hero-image,
+html.theme-ready .cv-nav-link {
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  html.theme-ready,
+  html.theme-ready body,
+  html.theme-ready .cv-header,
+  html.theme-ready .cv-card,
+  html.theme-ready .cv-stat,
+  html.theme-ready .cv-footer,
+  html.theme-ready .cv-button,
+  html.theme-ready .cv-theme-toggle,
+  html.theme-ready .cv-lang-toggle,
+  html.theme-ready .cv-menu-toggle,
+  html.theme-ready .cv-logo-mark,
+  html.theme-ready .cv-hero-image,
+  html.theme-ready .cv-nav-link {
+    transition: none;
+  }
 }
 
 button,

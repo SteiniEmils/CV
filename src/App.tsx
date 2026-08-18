@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { cv } from './data/cv'
 import { useLanguage } from './useLanguage.ts'
 import { localize, type UIKey } from './i18n.ts'
@@ -83,17 +83,27 @@ const CloseIcon = () => (
 
 function useTheme(): [Theme, () => void] {
   const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'dark'
-    const saved = localStorage.getItem(THEME_KEY) as Theme | null
-    if (saved) return saved
+    if (typeof window === 'undefined') return 'light'
+    const fromDom = document.documentElement.dataset.theme
+    if (fromDom === 'light' || fromDom === 'dark') return fromDom
+    const saved = localStorage.getItem(THEME_KEY)
+    if (saved === 'light' || saved === 'dark') return saved
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   })
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (typeof window === 'undefined') return
     document.documentElement.dataset.theme = theme
+    document.documentElement.style.colorScheme = theme
     localStorage.setItem(THEME_KEY, theme)
   }, [theme])
+
+  useEffect(() => {
+    const id = window.requestAnimationFrame(() => {
+      document.documentElement.classList.add('theme-ready')
+    })
+    return () => window.cancelAnimationFrame(id)
+  }, [])
 
   const toggle = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
   return [theme, toggle]
