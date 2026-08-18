@@ -27,6 +27,10 @@ export type Project = {
   description: string
   url: string
   tech: string
+  cover: string
+  logo: string
+  featured: boolean
+  images: string[]
 }
 
 export type Stat = {
