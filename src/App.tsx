@@ -303,10 +303,14 @@ function Experience() {
   )
 }
 
+function isVisibleCertification(status: string): boolean {
+  return status === 'done' || status === 'doing'
+}
+
 function EducationLanguagesReferences() {
   const { lang, t } = useLanguage()
-  const visibleCertifications = (cv.certifications ?? []).filter(
-    (cert) => cert.status === 'done' || cert.status === 'doing',
+  const visibleCertifications = (cv.certifications ?? []).filter((cert) =>
+    isVisibleCertification(String(cert.status)),
   )
 
   return (
@@ -336,7 +340,7 @@ function EducationLanguagesReferences() {
                   <li key={`${c.name}-${i}`}>
                     <strong>{c.name}</strong>
                     {c.issuer ? <span>{c.issuer}</span> : null}
-                    {c.status === 'doing' ? <span>{t('certInProgress')}</span> : null}
+                    {String(c.status) === 'doing' ? <span>{t('certInProgress')}</span> : null}
                   </li>
                 )
               })}
