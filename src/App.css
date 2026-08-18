@@ -475,7 +475,8 @@
 
 /* Languages & references */
 .cv-language-list,
-.cv-reference-list {
+.cv-reference-list,
+.cv-cert-list {
   list-style: none;
   padding: 0;
   margin: 0 0 28px;
@@ -485,21 +486,24 @@
 }
 
 .cv-language-list li,
-.cv-reference-list li {
+.cv-reference-list li,
+.cv-cert-list li {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
 .cv-language-list strong,
-.cv-reference-list strong {
+.cv-reference-list strong,
+.cv-cert-list strong {
   font-weight: 700;
   color: var(--text);
 }
 
 .cv-language-list span,
 .cv-reference-list span,
-.cv-reference-list a {
+.cv-reference-list a,
+.cv-cert-list span {
   font-size: 0.9rem;
   color: var(--text-muted);
 }

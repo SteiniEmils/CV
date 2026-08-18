@@ -37,10 +37,21 @@ export type Stat = {
 export type SkillCategory = {
   category: string
   items: string[]
+}
+
+export type Certification = {
+  name: string
+  issuer: string
+  status: 'doing' | 'done' | 'not-started'
 }`
 
 function toPublicCv(data) {
   const clone = structuredClone(data)
+  if (Array.isArray(clone.certifications)) {
+    clone.certifications = clone.certifications.filter(
+      (cert) => cert.status === 'done' || cert.status === 'doing'
+    )
+  }
   if (Array.isArray(clone.references)) {
     clone.references = clone.references.map((ref) => {
       const publicRef = { ...ref }

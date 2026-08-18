@@ -12,6 +12,8 @@ export type UIKey =
   | 'technicalSkills'
   | 'featuredProject'
   | 'education'
+  | 'certifications'
+  | 'certInProgress'
   | 'languages'
   | 'references'
   | 'availableOnRequest'
@@ -33,6 +35,8 @@ export const ui: Record<Lang, Record<UIKey, string>> = {
     technicalSkills: 'Technical Skills',
     featuredProject: 'Featured Project',
     education: 'Education',
+    certifications: 'Certifications',
+    certInProgress: 'In progress',
     languages: 'Languages',
     references: 'References',
     availableOnRequest: 'Available on request',
@@ -53,6 +57,8 @@ export const ui: Record<Lang, Record<UIKey, string>> = {
     technicalSkills: 'Tæknileg hæfni',
     featuredProject: 'Útvalið verkefni',
     education: 'Menntun',
+    certifications: 'Vottanir',
+    certInProgress: 'Í vinnslu',
     languages: 'Tungumál',
     references: 'Meðmæli',
     availableOnRequest: 'Fást sé óskað',

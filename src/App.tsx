@@ -305,6 +305,9 @@ function Experience() {
 
 function EducationLanguagesReferences() {
   const { lang, t } = useLanguage()
+  const visibleCertifications = (cv.certifications ?? []).filter(
+    (cert) => cert.status === 'done' || cert.status === 'doing',
+  )
 
   return (
     <section className="cv-section cv-two-col" id="education">
@@ -323,6 +326,23 @@ function EducationLanguagesReferences() {
             )
           })}
         </div>
+        {visibleCertifications.length > 0 && (
+          <>
+            <SectionTitle>{t('certifications')}</SectionTitle>
+            <ul className="cv-cert-list">
+              {visibleCertifications.map((cert, i) => {
+                const c = localize(cert as Record<string, unknown> & typeof cert, lang)
+                return (
+                  <li key={`${c.name}-${i}`}>
+                    <strong>{c.name}</strong>
+                    {c.issuer ? <span>{c.issuer}</span> : null}
+                    {c.status === 'doing' ? <span>{t('certInProgress')}</span> : null}
+                  </li>
+                )
+              })}
+            </ul>
+          </>
+        )}
       </div>
       <div className="cv-card cv-info">
         <SectionTitle>{t('languages')}</SectionTitle>

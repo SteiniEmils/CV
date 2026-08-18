@@ -88,7 +88,7 @@
       color: var(--muted);
       margin-bottom: 6px;
     }
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 10px 12px;
       border: 1px solid var(--border);
@@ -98,7 +98,7 @@
       font: inherit;
       font-size: 0.95rem;
     }
-    input:focus, textarea:focus {
+    input:focus, textarea:focus, select:focus {
       outline: none;
       border-color: var(--accent);
     }
@@ -304,6 +304,13 @@
       </section>
 
       <section>
+        <h2>Certifications</h2>
+        <p class="hint" style="margin:-8px 0 16px">The public CV only shows items marked Doing or Done. Not started stays in admin.</p>
+        <div id="certifications-list" class="list"></div>
+        <button type="button" class="secondary add" onclick="addItem('certifications')">+ Add certification</button>
+      </section>
+
+      <section>
         <h2>Projects</h2>
         <div id="projects-list" class="list"></div>
         <button type="button" class="secondary add" onclick="addItem('projects')">+ Add project</button>
@@ -386,6 +393,29 @@
     </div>
   </template>
 
+  <template id="tpl-certifications">
+    <div class="item">
+      <button type="button" class="danger remove" onclick="removeItem(this)">Remove</button>
+      <div class="item-fields">
+        <div class="pair">
+          <div class="field"><label>Name <span class="lang-tag">EN</span></label><input type="text" data-key="name" oninput="update(this)"></div>
+          <div class="field"><label>Name <span class="lang-tag">IS</span></label><input type="text" data-key="name" data-locale="is" oninput="update(this)"></div>
+        </div>
+        <div class="pair">
+          <div class="field"><label>Issuer</label><input type="text" data-key="issuer" oninput="update(this)" placeholder="e.g. CompTIA"></div>
+          <div class="field">
+            <label>Status</label>
+            <select data-key="status" oninput="update(this)">
+              <option value="not-started">Not started</option>
+              <option value="doing">Doing</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
   <template id="tpl-projects">
     <div class="item">
       <button type="button" class="danger remove" onclick="removeItem(this)">Remove</button>
@@ -453,6 +483,7 @@
       skillCategories: { category: '', items: '', locales: { is: { category: '', items: '' } } },
       experience: { role: '', company: '', start: '', end: '', description: '', locales: { is: { role: '', description: '' } } },
       education: { degree: '', institution: '', start: '', end: '', locales: { is: { degree: '' } } },
+      certifications: { name: '', issuer: '', status: 'not-started', locales: { is: { name: '' } } },
       projects: { name: '', description: '', url: '', tech: '', locales: { is: { description: '' } } },
       languages: { name: '', proficiency: '', locales: { is: { name: '', proficiency: '' } } },
       references: { name: '', role: '', company: '', phone: '', email: '', locales: { is: { role: '' } } },
@@ -481,6 +512,7 @@
         data.skillCategories = data.skillCategories || []
         data.experience = data.experience || []
         data.education = data.education || []
+        data.certifications = data.certifications || []
         data.projects = data.projects || []
         data.languages = data.languages || []
         data.references = data.references || []

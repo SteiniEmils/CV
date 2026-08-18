@@ -32,6 +32,12 @@ export type SkillCategory = {
   items: string[]
 }
 
+export type Certification = {
+  name: string
+  issuer: string
+  status: 'doing' | 'done' | 'not-started'
+}
+
 export const cv = {
   "name": "Þorsteinn Emilsson",
   "title": "Electrician · Developer",
@@ -48,7 +54,7 @@ export const cv = {
       "title": "Rafvirki · Forritari",
       "location": "Ísland",
       "hook": "Yfir 300 rafhleðslustöðvar uppsettar á heimilum og í iðnaði. Flutter- og React-forrit, sjálfshýst á Linux.",
-      "summary": "Tæknilegur fagmaður með fjölbreytta reynslu úr rafvirkjastörfum og uppsetningu rafhleðslustöðva, ásamt forritun, veftækni, stafrænni rekstri og verkefnisstjórnun. Reynsla af viðskiptavinasamskiptum, kostnaðaráætlun, efnisstjórnun og uppsetningu á yfir 300 rafhleðslustöðvum í íbúðar- og iðnaðarumhverfi. Byggir nútímalegar smáforrits- og veflausnir með Flutter, Dart, React og TypeScript, vinnur með PostgreSQL og Linux og getur hýst og rekkið hugbúnað sjálfur.",
+      "summary": "Tæknilegur fagmaður með fjölbreytta reynslu úr rafvirkjastörfum og uppsetningu rafhleðslustöðva, ásamt forritun, veftækni, stafrænni rekstri og verkefnisstjórnun. Reynsla af viðskiptavinasamskiptum, kostnaðaráætlun, efnisstjórnun og uppsetningu á yfir 300 rafhleðslustöðvum í íbúðar- og iðnaðarumhverfi. Byggir nútímalegar smáforrits- og veflausnir með Flutter, Dart, React og TypeScript, vinnur með PostgreSQL og Linux og getur hýst og rekið hugbúnað sjálfur.",
       "skills": [
         "Tæknileg verkefnisstjórnun",
         "Rekstur og kostnaðaráætlun",
@@ -280,6 +286,43 @@ export const cv = {
           "degree": "Rafiðn"
         }
       }
+    }
+  ],
+  "certifications": [
+    {
+      "name": "AWS Certified Cloud Practitioner (CLF-C02)",
+      "issuer": "Amazon Web Services",
+      "status": "doing"
+    },
+    {
+      "name": "Microsoft Certified: Azure Fundamentals (AZ-900)",
+      "issuer": "Microsoft",
+      "status": "doing"
+    },
+    {
+      "name": "AWS Certified AI Practitioner (AIF-C01)",
+      "issuer": "Amazon Web Services",
+      "status": "doing"
+    },
+    {
+      "name": "Microsoft Certified: Azure AI Fundamentals (AI-900)",
+      "issuer": "Microsoft",
+      "status": "doing"
+    },
+    {
+      "name": "Microsoft 365 Certified: Endpoint Administrator Associate (MD-102)",
+      "issuer": "Microsoft",
+      "status": "doing"
+    },
+    {
+      "name": "AWS Certified Solutions Architect – Associate (SAA-C03)",
+      "issuer": "Amazon Web Services",
+      "status": "doing"
+    },
+    {
+      "name": "Azure Administrator Associate (AZ-104)",
+      "issuer": "Microsoft",
+      "status": "doing"
     }
   ],
   "projects": [
