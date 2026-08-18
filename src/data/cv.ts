@@ -20,6 +20,10 @@ export type Project = {
   description: string
   url: string
   tech: string
+  cover: string
+  logo: string
+  featured: boolean
+  images: string[]
 }
 
 export type Stat = {
@@ -347,6 +351,10 @@ export const cv = {
       "description": "NFC-enabled digital memory platform for turning trips and experiences into interactive presentations containing photos, videos, maps, captions and timelines.",
       "url": "https://github.com/SteiniEmils/minngr_app",
       "tech": "Flutter, Dart, Supabase, PostgreSQL, NFC, GitHub",
+      "cover": "/images/projects/minngr-cover.png",
+      "logo": "",
+      "featured": true,
+      "images": [],
       "locales": {
         "is": {
           "description": "NFC-stýrð stafræn minnisvettvangur sem umbreyrir ferðum og upplifunum í gagnvirkar kynningar með myndum, myndböndum, kortum, skýringum og tímalínum."
@@ -358,6 +366,10 @@ export const cv = {
       "description": "Personal technical portfolio and CV application, designed for self-hosted deployment with a modern React/Vite frontend and Coolify infrastructure.",
       "url": "https://github.com/SteiniEmils/CV",
       "tech": "React, TypeScript, Vite, Docker, Coolify, Linux, Cloudflare",
+      "cover": "",
+      "logo": "/images/favicon.svg",
+      "featured": false,
+      "images": [],
       "locales": {
         "is": {
           "description": "Persónuleg tæknileg ferilskrár- og vefsíðuforrit, hannað fyrir sjálfshýstan rekstur með nútímalegri React/Vite framenda og Coolify innviðum."
@@ -369,6 +381,10 @@ export const cv = {
       "description": "Branding, product and digital marketing project for a skincare brand inspired by Kenyan heritage.",
       "url": "",
       "tech": "Branding, Photoshop, Product Development, Digital Marketing",
+      "cover": "",
+      "logo": "",
+      "featured": false,
+      "images": [],
       "locales": {
         "is": {
           "description": "Vörumerkjagerð, vöruþróun og stafræn markaðssetning fyrir húðvörumerki innblásið af kenýskri arfleifð."
@@ -380,9 +396,36 @@ export const cv = {
       "description": "Branding and visual design project involving professional marketing material and digital creative work.",
       "url": "",
       "tech": "Photoshop, Branding, Graphic Design, Marketing",
+      "cover": "/images/projects/land-og-synir-cover.png",
+      "logo": "/images/projects/land-og-synir-logo.png",
+      "featured": false,
+      "images": [],
       "locales": {
         "is": {
           "description": "Vörumerkjagerð og myndræn hönnun fagmenntaðra kynningarefna og stafræns hönnunarstarfs."
+        }
+      }
+    },
+    {
+      "name": "Páll Óskar",
+      "description": "Event posters and promotional design for Icelandic artist Páll Óskar — concert, nightlife, and seasonal campaigns.",
+      "url": "",
+      "tech": "Photoshop, Graphic Design, Event Branding, Poster Design",
+      "cover": "/images/projects/pall-oskar-austurbaer.png",
+      "logo": "",
+      "featured": false,
+      "images": [
+        "/images/projects/pall-oskar-austurbaer.png",
+        "/images/projects/pall-oskar-spot.png",
+        "/images/projects/pall-oskar-eurovision.png",
+        "/images/projects/pall-oskar-ljosanott.png",
+        "/images/projects/pall-oskar-halloween.png",
+        "/images/projects/pall-oskar-nyar.png",
+        "/images/projects/pall-oskar-strakaball.png"
+      ],
+      "locales": {
+        "is": {
+          "description": "Viðburðaplaköt og kynningarefni fyrir Pál Óskar — tónleika, næturlíf og árstíðabundnar herferðir."
         }
       }
     }

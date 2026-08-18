@@ -59,7 +59,10 @@ html.theme-ready .cv-lang-toggle,
 html.theme-ready .cv-menu-toggle,
 html.theme-ready .cv-logo-mark,
 html.theme-ready .cv-hero-image,
-html.theme-ready .cv-nav-link {
+html.theme-ready .cv-nav-link,
+html.theme-ready .cv-project-card,
+html.theme-ready .cv-project-media,
+html.theme-ready .cv-tech-chip {
   transition:
     background-color 0.35s ease,
     color 0.35s ease,
@@ -84,7 +87,10 @@ html.theme-ready .cv-nav-link {
   html.theme-ready .cv-menu-toggle,
   html.theme-ready .cv-logo-mark,
   html.theme-ready .cv-hero-image,
-  html.theme-ready .cv-nav-link {
+  html.theme-ready .cv-nav-link,
+  html.theme-ready .cv-project-card,
+  html.theme-ready .cv-project-media,
+  html.theme-ready .cv-tech-chip {
     transition: none;
   }
 }

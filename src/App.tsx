@@ -262,7 +262,7 @@ function Experience() {
   const { lang, t } = useLanguage()
 
   return (
-    <section className="cv-section cv-two-col" id="experience">
+    <section className="cv-section" id="experience">
       <div className="cv-card">
         <SectionTitle>{t('experience')}</SectionTitle>
         <div className="cv-timeline">
@@ -280,34 +280,115 @@ function Experience() {
           })}
         </div>
       </div>
-      <div className="cv-card cv-featured" id="projects">
-        <SectionTitle>{t('projects')}</SectionTitle>
-        <div className="cv-projects-list">
-          {cv.projects.map((project) => {
-            const p = localize(project as Record<string, unknown> & typeof project, lang)
-            return (
-              <article className="cv-project-item" key={p.name}>
-                <h3>
-                  {p.url ? (
-                    <a href={p.url} target="_blank" rel="noopener noreferrer">
-                      {p.name} <ArrowIcon />
-                    </a>
-                  ) : (
-                    p.name
-                  )}
-                </h3>
-                <p>{p.description}</p>
-                <div className="cv-featured-points">
-                  {p.tech.split(',').map((tTech) => (
-                    <span key={`${p.name}-${tTech.trim()}`} className="cv-featured-point">
-                      {tTech.trim()}
-                    </span>
-                  ))}
-                </div>
-              </article>
-            )
-          })}
+    </section>
+  )
+}
+
+function techList(tech: string) {
+  return tech.split(',').map((item) => item.trim()).filter(Boolean)
+}
+
+function projectShots(project: (typeof cv.projects)[number]) {
+  const cover = String(project.cover || '').trim()
+  const extra = Array.isArray(project.images)
+    ? project.images.map((src) => String(src).trim()).filter(Boolean)
+    : []
+  const shots: string[] = []
+  for (const src of [cover, ...extra]) {
+    if (!src || shots.includes(src)) continue
+    shots.push(src)
+  }
+  return shots
+}
+
+function ProjectCard({
+  project,
+  featured = false,
+}: {
+  project: (typeof cv.projects)[number]
+  featured?: boolean
+}) {
+  const { lang, t } = useLanguage()
+  const p = localize(project as Record<string, unknown> & typeof project, lang)
+  const shots = projectShots(project)
+  const logo = String(p.logo || '').trim()
+  const chips = techList(String(p.tech || ''))
+  const [active, setActive] = useState(shots[0] || '')
+  const current = shots.includes(active) ? active : shots[0] || ''
+  const gallery = shots.length > 1
+
+  return (
+    <article className={featured ? 'cv-project-featured' : 'cv-project-card'}>
+      {current ? (
+        <div className={`cv-project-media${gallery ? ' cv-project-media--gallery' : ''}`}>
+          <div className="cv-project-frame">
+            <img src={current} alt="" />
+            {logo ? <img className="cv-project-logo" src={logo} alt="" /> : null}
+          </div>
+          {gallery ? (
+            <div className="cv-project-thumbs" role="list">
+              {shots.map((src, index) => (
+                <button
+                  key={src}
+                  type="button"
+                  className={src === current ? 'is-active' : ''}
+                  aria-label={`${p.name} ${index + 1}`}
+                  onClick={() => setActive(src)}
+                >
+                  <img src={src} alt="" />
+                </button>
+              ))}
+            </div>
+          ) : null}
         </div>
+      ) : logo ? (
+        <div className="cv-project-media cv-project-media--logo">
+          <img className="cv-project-logo" src={logo} alt="" />
+        </div>
+      ) : null}
+      <div className="cv-project-body">
+        {featured ? <span className="cv-eyebrow">{t('featuredProject')}</span> : null}
+        <h3>
+          {p.url ? (
+            <a href={p.url} target="_blank" rel="noopener noreferrer">
+              {p.name} <ArrowIcon />
+            </a>
+          ) : (
+            p.name
+          )}
+        </h3>
+        <p>{p.description}</p>
+        {chips.length > 0 ? (
+          <div className="cv-tech-list">
+            {chips.map((chip) => (
+              <span key={`${p.name}-${chip}`} className="cv-tech-chip">
+                {chip}
+              </span>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </article>
+  )
+}
+
+function Projects() {
+  const { t } = useLanguage()
+  const featured = cv.projects.find((project) => Boolean(project.featured))
+  const rest = cv.projects.filter((project) => project !== featured)
+
+  return (
+    <section className="cv-section" id="projects">
+      <div className="cv-card cv-portfolio">
+        <SectionTitle>{t('projects')}</SectionTitle>
+        {featured ? <ProjectCard project={featured} featured /> : null}
+        {rest.length > 0 ? (
+          <div className="cv-projects-grid">
+            {rest.map((project) => (
+              <ProjectCard key={project.name} project={project} />
+            ))}
+          </div>
+        ) : null}
       </div>
     </section>
   )
@@ -480,6 +561,7 @@ function App() {
         <Hero />
         <AboutSkills />
         <Experience />
+        <Projects />
         <EducationLanguagesReferences />
         <Stats />
       </main>

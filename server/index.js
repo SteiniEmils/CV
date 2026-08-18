@@ -292,6 +292,11 @@ function namedCertifications(list) {
   return list.filter((cert) => String(cert?.name || '').trim())
 }
 
+function namedProjects(list) {
+  if (!Array.isArray(list)) return []
+  return list.filter((project) => String(project?.name || '').trim())
+}
+
 function ensureDataFile() {
   fs.mkdirSync(dataDir, { recursive: true })
   if (!fs.existsSync(dataSeedPath)) {
@@ -331,6 +336,36 @@ function ensureDataFile() {
           cert[field] = fromSeed[field]
           if (!added.includes('certifications')) added.push('certifications')
         }
+      }
+    }
+  }
+  if (Array.isArray(seed.projects)) {
+    if (!Array.isArray(current.projects)) current.projects = []
+    const have = new Set(namedProjects(current.projects).map((project) => project.name))
+    for (const project of namedProjects(seed.projects)) {
+      if (have.has(project.name)) continue
+      current.projects.push(project)
+      have.add(project.name)
+      if (!added.includes('projects')) added.push('projects')
+    }
+    const byName = new Map(seed.projects.map((project) => [project.name, project]))
+    for (const project of current.projects) {
+      const fromSeed = byName.get(project.name)
+      if (!fromSeed) continue
+      for (const field of ['cover', 'logo']) {
+        if (!String(project[field] || '').trim() && fromSeed[field]) {
+          project[field] = fromSeed[field]
+          if (!added.includes('projects')) added.push('projects')
+        }
+      }
+      if (!('featured' in project) && 'featured' in fromSeed) {
+        project.featured = fromSeed.featured
+        if (!added.includes('projects')) added.push('projects')
+      }
+      const seedImages = Array.isArray(fromSeed.images) ? fromSeed.images.filter(Boolean) : []
+      if ((!Array.isArray(project.images) || project.images.length === 0) && seedImages.length > 0) {
+        project.images = seedImages
+        if (!added.includes('projects')) added.push('projects')
       }
     }
   }

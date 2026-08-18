@@ -127,6 +127,18 @@
     }
     .item-fields { display: flex; flex-direction: column; gap: 14px; }
     .field { display: flex; flex-direction: column; gap: 4px; }
+    label.check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      color: var(--text);
+      cursor: pointer;
+    }
+    label.check input {
+      width: auto;
+      padding: 0;
+    }
     .row-4 {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -428,6 +440,10 @@
         <div class="field"><label>Name</label><input type="text" data-key="name" oninput="update(this)"></div>
         <div class="field"><label>URL</label><input type="text" data-key="url" oninput="update(this)"></div>
         <div class="field"><label>Technologies</label><input type="text" data-key="tech" oninput="update(this)"></div>
+        <div class="field"><label>Cover image URL</label><input type="text" data-key="cover" oninput="update(this)" placeholder="/images/projects/example.png"></div>
+        <div class="field"><label>Logo URL</label><input type="text" data-key="logo" oninput="update(this)" placeholder="/images/projects/logo.png"></div>
+        <div class="field"><label>Gallery image URLs (one per line)</label><textarea data-key="images" oninput="update(this)" placeholder="/images/projects/example.png"></textarea></div>
+        <label class="check"><input type="checkbox" data-key="featured" onchange="update(this)"> Featured on the CV</label>
         <div class="pair">
           <div class="field"><label>Description <span class="lang-tag">EN</span></label><textarea data-key="description" oninput="update(this)"></textarea></div>
           <div class="field"><label>Description <span class="lang-tag">IS</span></label><textarea data-key="description" data-locale="is" oninput="update(this)"></textarea></div>
@@ -489,7 +505,7 @@
       experience: { role: '', company: '', start: '', end: '', description: '', locales: { is: { role: '', description: '' } } },
       education: { degree: '', institution: '', start: '', end: '', locales: { is: { degree: '' } } },
       certifications: { name: '', issuer: '', purpose: '', logo: '', status: 'doing', locales: { is: { name: '', purpose: '' } } },
-      projects: { name: '', description: '', url: '', tech: '', locales: { is: { description: '' } } },
+      projects: { name: '', description: '', url: '', tech: '', cover: '', logo: '', featured: false, images: '', locales: { is: { description: '' } } },
       languages: { name: '', proficiency: '', locales: { is: { name: '', proficiency: '' } } },
       references: { name: '', role: '', company: '', phone: '', email: '', locales: { is: { role: '' } } },
       stats: { value: '', label: '', locales: { is: { label: '' } } }
@@ -566,6 +582,14 @@
         el.querySelectorAll('[data-key]').forEach(input => {
           input.dataset.section = section
           input.dataset.index = i
+          if (input.type === 'checkbox') {
+            input.checked = Boolean(item[input.dataset.key])
+            return
+          }
+          if (input.dataset.key === 'images') {
+            input.value = Array.isArray(item.images) ? item.images.join('\n') : (item.images ?? '')
+            return
+          }
           input.value = input.dataset.locale
             ? localeValue(item, input.dataset.key)
             : (item[input.dataset.key] ?? '')
@@ -661,6 +685,8 @@
       const item = data[el.dataset.section][parseInt(el.dataset.index, 10)]
       if (el.dataset.locale) {
         ensureIs(item)[el.dataset.key] = el.value
+      } else if (el.type === 'checkbox') {
+        item[el.dataset.key] = el.checked
       } else {
         item[el.dataset.key] = el.value
       }
@@ -703,6 +729,9 @@
       payload.skillCategories.forEach(c => {
         c.items = toArray(c.items)
         if (c.locales?.is) c.locales.is.items = toArray(c.locales.is.items)
+      })
+      payload.projects.forEach(p => {
+        p.images = toArray(p.images)
       })
       const btn = document.getElementById('save-btn')
       if (btn) btn.disabled = true
