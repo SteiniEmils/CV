@@ -42,6 +42,7 @@ export type SkillCategory = {
 export type Certification = {
   name: string
   issuer: string
+  purpose: string
   status: 'doing' | 'done' | 'not-started'
 }`
 

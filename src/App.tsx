@@ -340,6 +340,7 @@ function EducationLanguagesReferences() {
                   <li key={`${c.name}-${i}`}>
                     <strong>{c.name}</strong>
                     {c.issuer ? <span>{c.issuer}</span> : null}
+                    {c.purpose ? <span>{c.purpose}</span> : null}
                     {String(c.status) === 'doing' ? <span>{t('certInProgress')}</span> : null}
                   </li>
                 )

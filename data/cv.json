@@ -252,36 +252,43 @@
     {
       "name": "AWS Certified Cloud Practitioner (CLF-C02)",
       "issuer": "Amazon Web Services",
+      "purpose": "AWS foundation; international/remote market",
       "status": "doing"
     },
     {
       "name": "Microsoft Certified: Azure Fundamentals (AZ-900)",
       "issuer": "Microsoft",
+      "purpose": "Azure foundation; strong Icelandic-market relevance",
       "status": "doing"
     },
     {
       "name": "AWS Certified AI Practitioner (AIF-C01)",
       "issuer": "Amazon Web Services",
+      "purpose": "AI + AWS; strengthens remote-market profile",
       "status": "doing"
     },
     {
       "name": "Microsoft Certified: Azure AI Fundamentals (AI-900)",
       "issuer": "Microsoft",
+      "purpose": "AI + Microsoft/Azure",
       "status": "doing"
     },
     {
       "name": "Microsoft 365 Certified: Endpoint Administrator Associate (MD-102)",
       "issuer": "Microsoft",
+      "purpose": "Windows/Microsoft administration; valuable for Iceland",
       "status": "doing"
     },
     {
       "name": "AWS Certified Solutions Architect – Associate (SAA-C03)",
       "issuer": "Amazon Web Services",
+      "purpose": "Major cloud-engineering qualification",
       "status": "doing"
     },
     {
       "name": "Azure Administrator Associate (AZ-104)",
       "issuer": "Microsoft",
+      "purpose": "Deepens Azure capability and covers both major cloud platforms",
       "status": "doing"
     }
   ],

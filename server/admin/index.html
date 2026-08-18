@@ -402,7 +402,7 @@
           <div class="field"><label>Name <span class="lang-tag">IS</span></label><input type="text" data-key="name" data-locale="is" oninput="update(this)"></div>
         </div>
         <div class="pair">
-          <div class="field"><label>Issuer</label><input type="text" data-key="issuer" oninput="update(this)" placeholder="e.g. CompTIA"></div>
+          <div class="field"><label>Issuer</label><input type="text" data-key="issuer" oninput="update(this)" placeholder="e.g. Microsoft"></div>
           <div class="field">
             <label>Status</label>
             <select data-key="status" oninput="update(this)">
@@ -411,6 +411,10 @@
               <option value="done">Done</option>
             </select>
           </div>
+        </div>
+        <div class="pair">
+          <div class="field"><label>Purpose <span class="lang-tag">EN</span></label><textarea data-key="purpose" oninput="update(this)"></textarea></div>
+          <div class="field"><label>Purpose <span class="lang-tag">IS</span></label><textarea data-key="purpose" data-locale="is" oninput="update(this)"></textarea></div>
         </div>
       </div>
     </div>
@@ -483,7 +487,7 @@
       skillCategories: { category: '', items: '', locales: { is: { category: '', items: '' } } },
       experience: { role: '', company: '', start: '', end: '', description: '', locales: { is: { role: '', description: '' } } },
       education: { degree: '', institution: '', start: '', end: '', locales: { is: { degree: '' } } },
-      certifications: { name: '', issuer: '', status: 'not-started', locales: { is: { name: '' } } },
+      certifications: { name: '', issuer: '', purpose: '', status: 'doing', locales: { is: { name: '', purpose: '' } } },
       projects: { name: '', description: '', url: '', tech: '', locales: { is: { description: '' } } },
       languages: { name: '', proficiency: '', locales: { is: { name: '', proficiency: '' } } },
       references: { name: '', role: '', company: '', phone: '', email: '', locales: { is: { role: '' } } },
