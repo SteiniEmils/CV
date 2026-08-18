@@ -289,13 +289,31 @@ function rebuildFrontend() {
 
 function ensureDataFile() {
   fs.mkdirSync(dataDir, { recursive: true })
-  if (fs.existsSync(dataPath)) return
   if (!fs.existsSync(dataSeedPath)) {
-    console.error('Fatal: data/cv.json is missing and no seed file was found at data-seed/cv.json')
-    process.exit(1)
+    if (!fs.existsSync(dataPath)) {
+      console.error('Fatal: data/cv.json is missing and no seed file was found at data-seed/cv.json')
+      process.exit(1)
+    }
+    return
   }
-  fs.copyFileSync(dataSeedPath, dataPath)
-  console.log('Initialized data/cv.json from seed')
+  if (!fs.existsSync(dataPath)) {
+    fs.copyFileSync(dataSeedPath, dataPath)
+    console.log('Initialized data/cv.json from seed')
+    return
+  }
+
+  const current = JSON.parse(fs.readFileSync(dataPath, 'utf-8'))
+  const seed = JSON.parse(fs.readFileSync(dataSeedPath, 'utf-8'))
+  const added = []
+  for (const key of Object.keys(seed)) {
+    if (!(key in current)) {
+      current[key] = seed[key]
+      added.push(key)
+    }
+  }
+  if (added.length === 0) return
+  atomicWriteFile(dataPath, JSON.stringify(current, null, 2) + '\n')
+  console.log('Merged missing fields from seed into data/cv.json:', added.join(', '))
 }
 
 function apiAuth(req, res, next) {
