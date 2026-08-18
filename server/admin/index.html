@@ -43,7 +43,7 @@
       border-bottom: 1px solid var(--border);
     }
     .header-wrap {
-      max-width: 960px;
+      max-width: 1180px;
       margin: 0 auto;
       padding: 16px 24px;
       display: flex;
@@ -54,10 +54,68 @@
     }
     h1 { font-size: 1.25rem; margin: 0; }
     .toolbar { display: flex; gap: 10px; flex-wrap: wrap; }
-    main {
-      max-width: 960px;
+    .admin-shell {
+      max-width: 1180px;
       margin: 0 auto;
-      padding: 32px 24px 80px;
+    }
+    .admin-nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 12px 24px 0;
+      scrollbar-width: thin;
+    }
+    .admin-nav a {
+      flex: 0 0 auto;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .admin-nav a:hover,
+    .admin-nav a.is-active {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+    .admin-nav a.is-active {
+      background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+    }
+    main {
+      max-width: none;
+      margin: 0;
+      padding: 24px 24px 80px;
+    }
+    @media (min-width: 900px) {
+      .admin-shell {
+        display: grid;
+        grid-template-columns: 210px minmax(0, 1fr);
+        align-items: start;
+        gap: 8px;
+        padding: 0 24px;
+      }
+      .admin-nav {
+        position: sticky;
+        top: 84px;
+        flex-direction: column;
+        overflow: visible;
+        padding: 28px 0 40px;
+        gap: 4px;
+      }
+      .admin-nav a {
+        border-radius: 8px;
+        border-color: transparent;
+        background: transparent;
+      }
+      .admin-nav a.is-active {
+        border-color: transparent;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+      main { padding: 28px 0 80px; }
     }
     section {
       background: var(--surface);
@@ -66,6 +124,7 @@
       padding: 24px;
       margin-bottom: 24px;
       box-shadow: var(--shadow);
+      scroll-margin-top: 88px;
     }
     h2 {
       margin: 0 0 18px;
@@ -223,6 +282,54 @@
       color: var(--accent);
       margin-left: 6px;
     }
+    .upload-block { display: flex; flex-direction: column; gap: 8px; }
+    .upload-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .upload-preview, .gallery-thumb img {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .upload-preview.is-empty, .gallery-thumb img.is-empty { display: none; }
+    .upload-btn {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--surface);
+    }
+    .upload-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .upload-btn input { display: none; }
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .gallery-thumb {
+      position: relative;
+      width: 72px;
+    }
+    .gallery-thumb button {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      padding: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      line-height: 1;
+      background: #c0392b;
+    }
+    .gallery-thumb button:hover { background: #922b21; }
   </style>
 </head>
 <body>
@@ -230,8 +337,8 @@
     <div class="header-wrap">
       <h1>CV Editor</h1>
       <div class="toolbar">
-        <button class="secondary" onclick="window.open('/', '_blank')">View CV</button>
-        <button id="save-btn" onclick="save()">Save changes</button>
+        <button type="button" class="secondary" onclick="window.open('/', '_blank')">View CV</button>
+        <button type="button" id="save-btn" onclick="save()">Save changes</button>
         <form method="POST" action="/admin/logout">
           <button type="submit" class="secondary">Log out</button>
         </form>
@@ -239,11 +346,24 @@
     </div>
   </header>
 
+  <div class="admin-shell">
+    <nav class="admin-nav" aria-label="Editor sections">
+      <a href="#sec-basics">Basics</a>
+      <a href="#sec-skills">Skills</a>
+      <a href="#sec-skill-categories">Categories</a>
+      <a href="#sec-experience">Experience</a>
+      <a href="#sec-education">Education</a>
+      <a href="#sec-certifications">Certifications</a>
+      <a href="#sec-projects">Projects</a>
+      <a href="#sec-languages">Languages</a>
+      <a href="#sec-references">References</a>
+      <a href="#sec-stats">Stats</a>
+    </nav>
   <main>
     <div class="load" id="load">Loading CV…</div>
     <form id="editor" style="display:none">
       <p class="hint" style="margin: 0 0 20px">In each list, drag the ⋮⋮ handle or use Up / Down to change order. Save to update the live site.</p>
-      <section>
+      <section id="sec-basics">
         <h2>Basics</h2>
         <div class="grid-2">
           <div class="field"><label for="name">Name</label><input id="name" data-id="name"></div>
@@ -282,7 +402,7 @@
         </div>
       </section>
 
-      <section>
+      <section id="sec-skills">
         <h2>Skills</h2>
         <div class="pair">
           <div class="field">
@@ -297,57 +417,58 @@
         </div>
       </section>
 
-      <section>
+      <section id="sec-skill-categories">
         <h2>Skill categories</h2>
         <div id="skillCategories-list" class="list"></div>
         <button type="button" class="secondary add" onclick="addItem('skillCategories')">+ Add category</button>
       </section>
 
-      <section>
+      <section id="sec-experience">
         <h2>Experience</h2>
         <div id="experience-list" class="list"></div>
         <button type="button" class="secondary add" onclick="addItem('experience')">+ Add experience</button>
       </section>
 
-      <section>
+      <section id="sec-education">
         <h2>Education</h2>
         <div id="education-list" class="list"></div>
         <button type="button" class="secondary add" onclick="addItem('education')">+ Add education</button>
       </section>
 
-      <section>
+      <section id="sec-certifications">
         <h2>Certifications</h2>
         <p class="hint" style="margin:-8px 0 16px">The public CV only shows items marked Doing or Done. Not started stays in admin.</p>
         <div id="certifications-list" class="list"></div>
         <button type="button" class="secondary add" onclick="addItem('certifications')">+ Add certification</button>
       </section>
 
-      <section>
+      <section id="sec-projects">
         <h2>Projects</h2>
         <div id="projects-list" class="list"></div>
         <button type="button" class="secondary add" onclick="addItem('projects')">+ Add project</button>
       </section>
 
-      <section>
+      <section id="sec-languages">
         <h2>Languages</h2>
         <div id="languages-list" class="list"></div>
         <button type="button" class="secondary add" onclick="addItem('languages')">+ Add language</button>
       </section>
 
-      <section>
+      <section id="sec-references">
         <h2>References</h2>
         <p class="hint" style="margin:-8px 0 16px">Phone and email stay in admin only. The public page shows “available on request”.</p>
         <div id="references-list" class="list"></div>
         <button type="button" class="secondary add" onclick="addItem('references')">+ Add reference</button>
       </section>
 
-      <section>
+      <section id="sec-stats">
         <h2>Stats</h2>
         <div id="stats-list" class="list"></div>
         <button type="button" class="secondary add" onclick="addItem('stats')">+ Add stat</button>
       </section>
     </form>
   </main>
+  </div>
 
   <div id="status"></div>
 
@@ -440,10 +561,28 @@
         <div class="field"><label>Name</label><input type="text" data-key="name" oninput="update(this)"></div>
         <div class="field"><label>URL</label><input type="text" data-key="url" oninput="update(this)"></div>
         <div class="field"><label>Technologies</label><input type="text" data-key="tech" oninput="update(this)"></div>
-        <div class="field"><label>Cover image URL</label><input type="text" data-key="cover" oninput="update(this)" placeholder="/images/projects/example.png"></div>
-        <div class="field"><label>Logo URL</label><input type="text" data-key="logo" oninput="update(this)" placeholder="/images/projects/logo.png"></div>
-        <div class="field"><label>Gallery image URLs (one per line)</label><textarea data-key="images" oninput="update(this)" placeholder="/images/projects/example.png"></textarea></div>
-        <label class="check"><input type="checkbox" data-key="featured" onchange="update(this)"> Featured on the CV</label>
+        <div class="upload-block">
+          <label>Cover photo</label>
+          <div class="upload-row">
+            <img class="upload-preview is-empty" data-preview="cover" alt="">
+            <label class="upload-btn">Upload cover<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-upload="cover"></label>
+          </div>
+          <input type="text" data-key="cover" oninput="update(this)" placeholder="or paste an image URL">
+        </div>
+        <div class="upload-block">
+          <label>Logo</label>
+          <div class="upload-row">
+            <img class="upload-preview is-empty" data-preview="logo" alt="">
+            <label class="upload-btn">Upload logo<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-upload="logo"></label>
+          </div>
+          <input type="text" data-key="logo" oninput="update(this)" placeholder="or paste a logo URL">
+        </div>
+        <div class="upload-block">
+          <label>Gallery</label>
+          <div class="gallery" data-gallery></div>
+          <label class="upload-btn">Add photos<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-upload="gallery" multiple></label>
+        </div>
+        <label class="check"><input type="checkbox" data-key="featured" onchange="update(this)"> Featured project (only one)</label>
         <div class="pair">
           <div class="field"><label>Description <span class="lang-tag">EN</span></label><textarea data-key="description" oninput="update(this)"></textarea></div>
           <div class="field"><label>Description <span class="lang-tag">IS</span></label><textarea data-key="description" data-locale="is" oninput="update(this)"></textarea></div>
@@ -505,7 +644,7 @@
       experience: { role: '', company: '', start: '', end: '', description: '', locales: { is: { role: '', description: '' } } },
       education: { degree: '', institution: '', start: '', end: '', locales: { is: { degree: '' } } },
       certifications: { name: '', issuer: '', purpose: '', logo: '', status: 'doing', locales: { is: { name: '', purpose: '' } } },
-      projects: { name: '', description: '', url: '', tech: '', cover: '', logo: '', featured: false, images: '', locales: { is: { description: '' } } },
+      projects: { name: '', description: '', url: '', tech: '', cover: '', logo: '', featured: false, images: [], locales: { is: { description: '' } } },
       languages: { name: '', proficiency: '', locales: { is: { name: '', proficiency: '' } } },
       references: { name: '', role: '', company: '', phone: '', email: '', locales: { is: { role: '' } } },
       stats: { value: '', label: '', locales: { is: { label: '' } } }
@@ -547,7 +686,13 @@
           if (c.locales?.is) c.locales.is.items = joinList(c.locales.is.items)
         })
 
+        data.projects.forEach(p => {
+          p.featured = p.featured === true
+          p.images = toArray(p.images)
+        })
+
         render()
+        bindNav()
         document.getElementById('load').style.display = 'none'
         document.getElementById('editor').style.display = 'block'
       } catch (err) {
@@ -583,11 +728,7 @@
           input.dataset.section = section
           input.dataset.index = i
           if (input.type === 'checkbox') {
-            input.checked = Boolean(item[input.dataset.key])
-            return
-          }
-          if (input.dataset.key === 'images') {
-            input.value = Array.isArray(item.images) ? item.images.join('\n') : (item.images ?? '')
+            input.checked = item[input.dataset.key] === true
             return
           }
           input.value = input.dataset.locale
@@ -595,6 +736,7 @@
             : (item[input.dataset.key] ?? '')
         })
 
+        if (section === 'projects') bindProjectMedia(el, item, i)
         bindDrag(el)
         container.appendChild(el)
       })
@@ -685,10 +827,18 @@
       const item = data[el.dataset.section][parseInt(el.dataset.index, 10)]
       if (el.dataset.locale) {
         ensureIs(item)[el.dataset.key] = el.value
+      } else if (el.type === 'checkbox' && el.dataset.key === 'featured') {
+        data.projects.forEach((project, i) => {
+          project.featured = el.checked && i === parseInt(el.dataset.index, 10)
+        })
+        renderSection('projects')
       } else if (el.type === 'checkbox') {
         item[el.dataset.key] = el.checked
       } else {
         item[el.dataset.key] = el.value
+        if (el.dataset.key === 'cover' || el.dataset.key === 'logo') {
+          setPreview(el.closest('.item'), el.dataset.key, el.value)
+        }
       }
     }
 
@@ -706,7 +856,104 @@
     }
 
     function toArray(s) {
-      return (s || '').split(/[,\n]+/).map(x => x.trim()).filter(Boolean)
+      if (Array.isArray(s)) return s.map((x) => String(x).trim()).filter(Boolean)
+      return String(s || '').split(/[,\n]+/).map(x => x.trim()).filter(Boolean)
+    }
+
+    function setPreview(itemEl, key, url) {
+      const img = itemEl.querySelector(`[data-preview="${key}"]`)
+      if (!img) return
+      if (url) {
+        img.src = url
+        img.classList.remove('is-empty')
+      } else {
+        img.removeAttribute('src')
+        img.classList.add('is-empty')
+      }
+    }
+
+    function bindProjectMedia(el, item, index) {
+      setPreview(el, 'cover', item.cover)
+      setPreview(el, 'logo', item.logo)
+      const gallery = el.querySelector('[data-gallery]')
+      gallery.innerHTML = ''
+      toArray(item.images).forEach((src, shot) => {
+        const wrap = document.createElement('div')
+        wrap.className = 'gallery-thumb'
+        const img = document.createElement('img')
+        img.src = src
+        img.alt = ''
+        const remove = document.createElement('button')
+        remove.type = 'button'
+        remove.setAttribute('aria-label', 'Remove photo')
+        remove.textContent = '×'
+        remove.onclick = () => {
+          item.images = toArray(item.images).filter((_, i) => i !== shot)
+          bindProjectMedia(el, item, index)
+        }
+        wrap.append(img, remove)
+        gallery.appendChild(wrap)
+      })
+      el.querySelectorAll('[data-upload]').forEach((input) => {
+        input.onchange = async () => {
+          const files = [...input.files]
+          input.value = ''
+          if (!files.length) return
+          try {
+            show('Uploading photo…', false, true)
+            if (input.dataset.upload === 'gallery') {
+              const urls = []
+              for (const file of files) urls.push(await uploadFile(file))
+              item.images = [...toArray(item.images), ...urls]
+            } else {
+              const url = await uploadFile(files[0])
+              item[input.dataset.upload] = url
+              const field = el.querySelector(`[data-key="${input.dataset.upload}"]`)
+              if (field) field.value = url
+            }
+            bindProjectMedia(el, item, index)
+            show('Photo added. Save changes to update the live site.')
+          } catch (err) {
+            show(err.message, true)
+          }
+        }
+      })
+    }
+
+    async function uploadFile(file) {
+      const res = await fetch('/api/upload?filename=' + encodeURIComponent(file.name), {
+        method: 'POST',
+        headers: { 'Content-Type': file.type || 'application/octet-stream' },
+        body: file
+      })
+      const result = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(result.error || 'Upload failed')
+      return result.url
+    }
+
+    function bindNav() {
+      const links = [...document.querySelectorAll('.admin-nav a')]
+      const sections = links
+        .map((link) => document.querySelector(link.getAttribute('href')))
+        .filter(Boolean)
+      const setActive = (id) => {
+        links.forEach((link) => link.classList.toggle('is-active', link.getAttribute('href') === `#${id}`))
+      }
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+        if (visible) setActive(visible.target.id)
+      }, { rootMargin: '-20% 0px -65% 0px', threshold: [0.1, 0.4] })
+      sections.forEach((section) => observer.observe(section))
+      links.forEach((link) => {
+        link.addEventListener('click', (event) => {
+          const target = document.querySelector(link.getAttribute('href'))
+          if (!target) return
+          event.preventDefault()
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          setActive(target.id)
+        })
+      })
+      if (sections[0]) setActive(sections[0].id)
     }
 
     let statusTimer
@@ -731,6 +978,7 @@
         if (c.locales?.is) c.locales.is.items = toArray(c.locales.is.items)
       })
       payload.projects.forEach(p => {
+        p.featured = p.featured === true
         p.images = toArray(p.images)
       })
       const btn = document.getElementById('save-btn')
@@ -758,6 +1006,9 @@
       }
     }
 
+    document.getElementById('editor').addEventListener('submit', (event) => {
+      event.preventDefault()
+    })
     document.getElementById('editor').addEventListener('input', (event) => {
       if (event.target.matches('[data-id], [data-locale-id]')) update(event.target)
     })
