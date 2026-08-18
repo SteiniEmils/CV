@@ -16,8 +16,10 @@ app.use(express.urlencoded({ extended: true }))
 const dataDir = path.join(rootDir, 'data')
 const dataPath = path.join(dataDir, 'cv.json')
 const dataSeedPath = path.join(rootDir, 'data-seed', 'cv.json')
+const uploadsDir = path.join(dataDir, 'uploads')
 const adminDir = path.join(__dirname, 'admin')
 const distDir = path.join(rootDir, 'dist')
+const ALLOWED_UPLOAD_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif'])
 const loginHtml = path.join(adminDir, 'login.html')
 const viteBin = path.join(rootDir, 'node_modules', 'vite', 'bin', 'vite.js')
 
@@ -297,6 +299,21 @@ function namedProjects(list) {
   return list.filter((project) => String(project?.name || '').trim())
 }
 
+function ensureUploadsDir() {
+  fs.mkdirSync(uploadsDir, { recursive: true })
+}
+
+function safeUploadName(original) {
+  const ext = path.extname(String(original || '')).toLowerCase()
+  if (!ALLOWED_UPLOAD_EXTS.has(ext)) return null
+  const base = path.basename(String(original), ext)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40) || 'image'
+  return `${base}-${crypto.randomBytes(4).toString('hex')}${ext}`
+}
+
 function ensureDataFile() {
   fs.mkdirSync(dataDir, { recursive: true })
   if (!fs.existsSync(dataSeedPath)) {
@@ -396,6 +413,25 @@ app.get('/api/cv', apiAuth, (req, res) => {
   }
 })
 
+app.post('/api/upload', apiAuth, express.raw({ type: () => true, limit: '8mb' }), (req, res) => {
+  try {
+    ensureUploadsDir()
+    const name = safeUploadName(req.query.filename)
+    if (!name) {
+      res.status(400).json({ error: 'Use a JPG, PNG, WebP, or GIF image.' })
+      return
+    }
+    if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
+      res.status(400).json({ error: 'Empty file' })
+      return
+    }
+    fs.writeFileSync(path.join(uploadsDir, name), req.body)
+    res.json({ url: `/uploads/${name}` })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 app.post('/api/cv', apiAuth, async (req, res) => {
   try {
     const result = await enqueueSave(async () => {
@@ -441,6 +477,7 @@ app.post('/admin/logout', (req, res) => {
   res.redirect('/admin/login')
 })
 
+app.use('/uploads', express.static(uploadsDir))
 app.use('/admin', adminAuth, express.static(adminDir))
 
 app.get('/admin', adminAuth, (req, res) => {
@@ -464,6 +501,7 @@ const PORT = process.env.PORT || 3000
 
 async function start() {
   ensureDataFile()
+  ensureUploadsDir()
   if (isProduction) {
     try {
       console.log('Rebuilding site from data/cv.json…')
