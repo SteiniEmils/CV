@@ -43,6 +43,7 @@ export type Certification = {
   name: string
   issuer: string
   purpose: string
+  logo: string
   status: 'doing' | 'done' | 'not-started'
 }`
 

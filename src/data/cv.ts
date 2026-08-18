@@ -36,6 +36,7 @@ export type Certification = {
   name: string
   issuer: string
   purpose: string
+  logo: string
   status: 'doing' | 'done' | 'not-started'
 }
 
@@ -294,42 +295,49 @@ export const cv = {
       "name": "AWS Certified Cloud Practitioner (CLF-C02)",
       "issuer": "Amazon Web Services",
       "purpose": "AWS foundation; international/remote market",
+      "logo": "/images/certs/aws-clf-c02.png",
       "status": "doing"
     },
     {
       "name": "Microsoft Certified: Azure Fundamentals (AZ-900)",
       "issuer": "Microsoft",
       "purpose": "Azure foundation; strong Icelandic-market relevance",
+      "logo": "/images/certs/ms-az-900.png",
       "status": "doing"
     },
     {
       "name": "AWS Certified AI Practitioner (AIF-C01)",
       "issuer": "Amazon Web Services",
       "purpose": "AI + AWS; strengthens remote-market profile",
+      "logo": "/images/certs/aws-aif-c01.png",
       "status": "doing"
     },
     {
       "name": "Microsoft Certified: Azure AI Fundamentals (AI-900)",
       "issuer": "Microsoft",
       "purpose": "AI + Microsoft/Azure",
+      "logo": "/images/certs/ms-ai-900.png",
       "status": "doing"
     },
     {
       "name": "Microsoft 365 Certified: Endpoint Administrator Associate (MD-102)",
       "issuer": "Microsoft",
       "purpose": "Windows/Microsoft administration; valuable for Iceland",
+      "logo": "/images/certs/ms-associate.svg",
       "status": "doing"
     },
     {
       "name": "AWS Certified Solutions Architect – Associate (SAA-C03)",
       "issuer": "Amazon Web Services",
       "purpose": "Major cloud-engineering qualification",
+      "logo": "/images/certs/aws-saa-c03.png",
       "status": "doing"
     },
     {
       "name": "Azure Administrator Associate (AZ-104)",
       "issuer": "Microsoft",
       "purpose": "Deepens Azure capability and covers both major cloud platforms",
+      "logo": "/images/certs/ms-associate.svg",
       "status": "doing"
     }
   ],

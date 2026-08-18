@@ -338,10 +338,15 @@ function EducationLanguagesReferences() {
                 const c = localize(cert as Record<string, unknown> & typeof cert, lang)
                 return (
                   <li key={`${c.name}-${i}`}>
-                    <strong>{c.name}</strong>
-                    {c.issuer ? <span>{c.issuer}</span> : null}
-                    {c.purpose ? <span>{c.purpose}</span> : null}
-                    {String(c.status) === 'doing' ? <span>{t('certInProgress')}</span> : null}
+                    {c.logo ? (
+                      <img className="cv-cert-logo" src={c.logo} alt="" />
+                    ) : null}
+                    <div className="cv-cert-body">
+                      <strong>{c.name}</strong>
+                      {c.issuer ? <span>{c.issuer}</span> : null}
+                      {c.purpose ? <span>{c.purpose}</span> : null}
+                      {String(c.status) === 'doing' ? <span>{t('certInProgress')}</span> : null}
+                    </div>
                   </li>
                 )
               })}

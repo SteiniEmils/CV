@@ -486,11 +486,31 @@
 }
 
 .cv-language-list li,
-.cv-reference-list li,
-.cv-cert-list li {
+.cv-reference-list li {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.cv-cert-list li {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.cv-cert-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.cv-cert-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .cv-language-list strong,

@@ -321,6 +321,18 @@ function ensureDataFile() {
   if (seedCerts.length > 0 && namedCertifications(current.certifications).length === 0) {
     current.certifications = seed.certifications
     added.push('certifications')
+  } else if (Array.isArray(current.certifications) && Array.isArray(seed.certifications)) {
+    const byName = new Map(seed.certifications.map((cert) => [cert.name, cert]))
+    for (const cert of current.certifications) {
+      const fromSeed = byName.get(cert.name)
+      if (!fromSeed) continue
+      for (const field of ['logo', 'purpose', 'issuer']) {
+        if (!String(cert[field] || '').trim() && fromSeed[field]) {
+          cert[field] = fromSeed[field]
+          if (!added.includes('certifications')) added.push('certifications')
+        }
+      }
+    }
   }
   if (added.length === 0) return
   atomicWriteFile(dataPath, JSON.stringify(current, null, 2) + '\n')
