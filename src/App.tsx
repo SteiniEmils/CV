@@ -278,9 +278,13 @@ function Experience() {
             return (
               <article className="cv-project-item" key={p.name}>
                 <h3>
-                  <a href={p.url} target="_blank" rel="noopener noreferrer">
-                    {p.name} <ArrowIcon />
-                  </a>
+                  {p.url ? (
+                    <a href={p.url} target="_blank" rel="noopener noreferrer">
+                      {p.name} <ArrowIcon />
+                    </a>
+                  ) : (
+                    p.name
+                  )}
                 </h3>
                 <p>{p.description}</p>
                 <div className="cv-featured-points">

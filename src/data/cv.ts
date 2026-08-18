@@ -308,7 +308,7 @@ export const cv = {
     {
       "name": "SHAMBA",
       "description": "Branding, product and digital marketing project for a skincare brand inspired by Kenyan heritage.",
-      "url": "https://steiniemils.com",
+      "url": "",
       "tech": "Branding, Photoshop, Product Development, Digital Marketing",
       "locales": {
         "is": {
@@ -319,7 +319,7 @@ export const cv = {
     {
       "name": "Land og Synir",
       "description": "Branding and visual design project involving professional marketing material and digital creative work.",
-      "url": "https://steiniemils.com",
+      "url": "",
       "tech": "Photoshop, Branding, Graphic Design, Marketing",
       "locales": {
         "is": {
