@@ -174,6 +174,22 @@
     }
     #status.show { display: block; }
     .load { text-align: center; padding: 60px; color: var(--muted); }
+    .pair {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    @media (min-width: 680px) {
+      .pair { grid-template-columns: 1fr 1fr; }
+    }
+    .lang-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-left: 6px;
+    }
   </style>
 </head>
 <body>
@@ -197,26 +213,53 @@
         <h2>Basics</h2>
         <div class="grid-2">
           <div class="field"><label for="name">Name</label><input id="name" data-id="name"></div>
-          <div class="field"><label for="title">Title</label><input id="title" data-id="title"></div>
-          <div class="field"><label for="location">Location</label><input id="location" data-id="location"></div>
           <div class="field"><label for="email">Email</label><input id="email" data-id="email"></div>
           <div class="field"><label for="phone">Phone</label><input id="phone" data-id="phone"></div>
           <div class="field"><label for="github">GitHub URL</label><input id="github" data-id="github"></div>
           <div class="field"><label for="website">Website URL</label><input id="website" data-id="website"></div>
           <div class="field"><label for="linkedin">LinkedIn URL</label><input id="linkedin" data-id="linkedin"></div>
         </div>
-        <div class="field" style="margin-top:16px">
-          <label for="summary">Summary</label>
-          <textarea id="summary" data-id="summary"></textarea>
+        <div class="pair" style="margin-top:16px">
+          <div class="field"><label for="title">Title <span class="lang-tag">EN</span></label><input id="title" data-id="title"></div>
+          <div class="field"><label for="title-is">Title <span class="lang-tag">IS</span></label><input id="title-is" data-locale-id="title"></div>
+          <div class="field"><label for="location">Location <span class="lang-tag">EN</span></label><input id="location" data-id="location"></div>
+          <div class="field"><label for="location-is">Location <span class="lang-tag">IS</span></label><input id="location-is" data-locale-id="location"></div>
+        </div>
+        <div class="pair" style="margin-top:16px">
+          <div class="field">
+            <label for="hook">Hero hook <span class="lang-tag">EN</span></label>
+            <textarea id="hook" data-id="hook"></textarea>
+            <p class="hint">Short line under the name on the public page.</p>
+          </div>
+          <div class="field">
+            <label for="hook-is">Hero hook <span class="lang-tag">IS</span></label>
+            <textarea id="hook-is" data-locale-id="hook"></textarea>
+          </div>
+        </div>
+        <div class="pair" style="margin-top:16px">
+          <div class="field">
+            <label for="summary">About summary <span class="lang-tag">EN</span></label>
+            <textarea id="summary" data-id="summary"></textarea>
+          </div>
+          <div class="field">
+            <label for="summary-is">About summary <span class="lang-tag">IS</span></label>
+            <textarea id="summary-is" data-locale-id="summary"></textarea>
+          </div>
         </div>
       </section>
 
       <section>
         <h2>Skills</h2>
-        <div class="field">
-          <label for="skills">Skill list</label>
-          <textarea id="skills" data-id="skills" placeholder="Flutter, Dart, React…"></textarea>
-          <p class="hint">Separate skills with commas or new lines.</p>
+        <div class="pair">
+          <div class="field">
+            <label for="skills">Skill list <span class="lang-tag">EN</span></label>
+            <textarea id="skills" data-id="skills" placeholder="Flutter, Dart, React…"></textarea>
+            <p class="hint">Separate skills with commas or new lines.</p>
+          </div>
+          <div class="field">
+            <label for="skills-is">Skill list <span class="lang-tag">IS</span></label>
+            <textarea id="skills-is" data-locale-id="skills"></textarea>
+          </div>
         </div>
       </section>
 
@@ -245,6 +288,19 @@
       </section>
 
       <section>
+        <h2>Languages</h2>
+        <div id="languages-list" class="list"></div>
+        <button type="button" class="secondary add" onclick="addItem('languages')">+ Add language</button>
+      </section>
+
+      <section>
+        <h2>References</h2>
+        <p class="hint" style="margin:-8px 0 16px">Phone and email stay in admin only. The public page shows “available on request”.</p>
+        <div id="references-list" class="list"></div>
+        <button type="button" class="secondary add" onclick="addItem('references')">+ Add reference</button>
+      </section>
+
+      <section>
         <h2>Stats</h2>
         <div id="stats-list" class="list"></div>
         <button type="button" class="secondary add" onclick="addItem('stats')">+ Add stat</button>
@@ -258,8 +314,14 @@
     <div class="item">
       <button type="button" class="danger remove" onclick="removeItem(this)">Remove</button>
       <div class="item-fields">
-        <div class="field"><label>Category name</label><input type="text" data-key="category" oninput="update(this)"></div>
-        <div class="field"><label>Skills</label><textarea data-key="items" oninput="update(this)" placeholder="Skill one, Skill two…"></textarea><p class="hint">Separate with commas or new lines.</p></div>
+        <div class="pair">
+          <div class="field"><label>Category name <span class="lang-tag">EN</span></label><input type="text" data-key="category" oninput="update(this)"></div>
+          <div class="field"><label>Category name <span class="lang-tag">IS</span></label><input type="text" data-key="category" data-locale="is" oninput="update(this)"></div>
+        </div>
+        <div class="pair">
+          <div class="field"><label>Skills <span class="lang-tag">EN</span></label><textarea data-key="items" oninput="update(this)" placeholder="Skill one, Skill two…"></textarea><p class="hint">Separate with commas or new lines.</p></div>
+          <div class="field"><label>Skills <span class="lang-tag">IS</span></label><textarea data-key="items" data-locale="is" oninput="update(this)"></textarea></div>
+        </div>
       </div>
     </div>
   </template>
@@ -268,13 +330,19 @@
     <div class="item">
       <button type="button" class="danger remove" onclick="removeItem(this)">Remove</button>
       <div class="item-fields">
-        <div class="field"><label>Role</label><input type="text" data-key="role" oninput="update(this)"></div>
         <div class="field"><label>Company</label><input type="text" data-key="company" oninput="update(this)"></div>
+        <div class="pair">
+          <div class="field"><label>Role <span class="lang-tag">EN</span></label><input type="text" data-key="role" oninput="update(this)"></div>
+          <div class="field"><label>Role <span class="lang-tag">IS</span></label><input type="text" data-key="role" data-locale="is" oninput="update(this)"></div>
+        </div>
         <div class="row-4">
           <div class="field"><label>Start</label><input type="text" data-key="start" oninput="update(this)"></div>
           <div class="field"><label>End</label><input type="text" data-key="end" oninput="update(this)"></div>
         </div>
-        <div class="field"><label>Description</label><textarea data-key="description" oninput="update(this)"></textarea></div>
+        <div class="pair">
+          <div class="field"><label>Description <span class="lang-tag">EN</span></label><textarea data-key="description" oninput="update(this)"></textarea></div>
+          <div class="field"><label>Description <span class="lang-tag">IS</span></label><textarea data-key="description" data-locale="is" oninput="update(this)"></textarea></div>
+        </div>
       </div>
     </div>
   </template>
@@ -283,8 +351,11 @@
     <div class="item">
       <button type="button" class="danger remove" onclick="removeItem(this)">Remove</button>
       <div class="item-fields">
-        <div class="field"><label>Degree</label><input type="text" data-key="degree" oninput="update(this)"></div>
         <div class="field"><label>Institution</label><input type="text" data-key="institution" oninput="update(this)"></div>
+        <div class="pair">
+          <div class="field"><label>Degree <span class="lang-tag">EN</span></label><input type="text" data-key="degree" oninput="update(this)"></div>
+          <div class="field"><label>Degree <span class="lang-tag">IS</span></label><input type="text" data-key="degree" data-locale="is" oninput="update(this)"></div>
+        </div>
         <div class="row-4">
           <div class="field"><label>Start</label><input type="text" data-key="start" oninput="update(this)"></div>
           <div class="field"><label>End</label><input type="text" data-key="end" oninput="update(this)"></div>
@@ -300,7 +371,42 @@
         <div class="field"><label>Name</label><input type="text" data-key="name" oninput="update(this)"></div>
         <div class="field"><label>URL</label><input type="text" data-key="url" oninput="update(this)"></div>
         <div class="field"><label>Technologies</label><input type="text" data-key="tech" oninput="update(this)"></div>
-        <div class="field"><label>Description</label><textarea data-key="description" oninput="update(this)"></textarea></div>
+        <div class="pair">
+          <div class="field"><label>Description <span class="lang-tag">EN</span></label><textarea data-key="description" oninput="update(this)"></textarea></div>
+          <div class="field"><label>Description <span class="lang-tag">IS</span></label><textarea data-key="description" data-locale="is" oninput="update(this)"></textarea></div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-languages">
+    <div class="item">
+      <button type="button" class="danger remove" onclick="removeItem(this)">Remove</button>
+      <div class="item-fields">
+        <div class="pair">
+          <div class="field"><label>Language <span class="lang-tag">EN</span></label><input type="text" data-key="name" oninput="update(this)"></div>
+          <div class="field"><label>Language <span class="lang-tag">IS</span></label><input type="text" data-key="name" data-locale="is" oninput="update(this)"></div>
+          <div class="field"><label>Proficiency <span class="lang-tag">EN</span></label><input type="text" data-key="proficiency" oninput="update(this)"></div>
+          <div class="field"><label>Proficiency <span class="lang-tag">IS</span></label><input type="text" data-key="proficiency" data-locale="is" oninput="update(this)"></div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-references">
+    <div class="item">
+      <button type="button" class="danger remove" onclick="removeItem(this)">Remove</button>
+      <div class="item-fields">
+        <div class="field"><label>Name</label><input type="text" data-key="name" oninput="update(this)"></div>
+        <div class="field"><label>Company</label><input type="text" data-key="company" oninput="update(this)"></div>
+        <div class="pair">
+          <div class="field"><label>Role <span class="lang-tag">EN</span></label><input type="text" data-key="role" oninput="update(this)"></div>
+          <div class="field"><label>Role <span class="lang-tag">IS</span></label><input type="text" data-key="role" data-locale="is" oninput="update(this)"></div>
+        </div>
+        <div class="pair">
+          <div class="field"><label>Phone (admin only)</label><input type="text" data-key="phone" oninput="update(this)"></div>
+          <div class="field"><label>Email (admin only)</label><input type="text" data-key="email" oninput="update(this)"></div>
+        </div>
       </div>
     </div>
   </template>
@@ -308,9 +414,12 @@
   <template id="tpl-stats">
     <div class="item">
       <button type="button" class="danger remove" onclick="removeItem(this)">Remove</button>
-      <div class="item-fields row-4">
+      <div class="item-fields">
         <div class="field"><label>Value</label><input type="text" data-key="value" oninput="update(this)"></div>
-        <div class="field"><label>Label</label><input type="text" data-key="label" oninput="update(this)"></div>
+        <div class="pair">
+          <div class="field"><label>Label <span class="lang-tag">EN</span></label><input type="text" data-key="label" oninput="update(this)"></div>
+          <div class="field"><label>Label <span class="lang-tag">IS</span></label><input type="text" data-key="label" data-locale="is" oninput="update(this)"></div>
+        </div>
       </div>
     </div>
   </template>
@@ -319,11 +428,27 @@
     let data = {}
 
     const schema = {
-      skillCategories: { category: '', items: '' },
-      experience: { role: '', company: '', start: '', end: '', description: '' },
-      education: { degree: '', institution: '', start: '', end: '' },
-      projects: { name: '', description: '', url: '', tech: '' },
-      stats: { value: '', label: '' }
+      skillCategories: { category: '', items: '', locales: { is: { category: '', items: '' } } },
+      experience: { role: '', company: '', start: '', end: '', description: '', locales: { is: { role: '', description: '' } } },
+      education: { degree: '', institution: '', start: '', end: '', locales: { is: { degree: '' } } },
+      projects: { name: '', description: '', url: '', tech: '', locales: { is: { description: '' } } },
+      languages: { name: '', proficiency: '', locales: { is: { name: '', proficiency: '' } } },
+      references: { name: '', role: '', company: '', phone: '', email: '', locales: { is: { role: '' } } },
+      stats: { value: '', label: '', locales: { is: { label: '' } } }
+    }
+
+    function ensureIs(obj) {
+      if (!obj.locales) obj.locales = {}
+      if (!obj.locales.is) obj.locales.is = {}
+      return obj.locales.is
+    }
+
+    function localeValue(item, key) {
+      return item?.locales?.is?.[key] ?? ''
+    }
+
+    function joinList(value) {
+      return Array.isArray(value) ? value.join(', ') : (value ?? '')
     }
 
     async function load() {
@@ -331,8 +456,21 @@
         const res = await fetch('/api/cv')
         data = await res.json()
 
-        data.skills = data.skills.join(', ')
-        data.skillCategories.forEach(c => c.items = c.items.join(', '))
+        data.skillCategories = data.skillCategories || []
+        data.experience = data.experience || []
+        data.education = data.education || []
+        data.projects = data.projects || []
+        data.languages = data.languages || []
+        data.references = data.references || []
+        data.stats = data.stats || []
+        ensureIs(data)
+
+        data.skills = joinList(data.skills)
+        data.locales.is.skills = joinList(data.locales.is.skills)
+        data.skillCategories.forEach(c => {
+          c.items = joinList(c.items)
+          if (c.locales?.is) c.locales.is.items = joinList(c.locales.is.items)
+        })
 
         render()
         document.getElementById('load').style.display = 'none'
@@ -344,8 +482,10 @@
 
     function render() {
       document.querySelectorAll('[data-id]').forEach(el => {
-        const key = el.dataset.id
-        el.value = data[key] ?? ''
+        el.value = data[el.dataset.id] ?? ''
+      })
+      document.querySelectorAll('[data-locale-id]').forEach(el => {
+        el.value = localeValue(data, el.dataset.localeId)
       })
       Object.keys(schema).forEach(renderSection)
     }
@@ -363,7 +503,9 @@
         el.querySelectorAll('[data-key]').forEach(input => {
           input.dataset.section = section
           input.dataset.index = i
-          input.value = item[input.dataset.key] ?? ''
+          input.value = input.dataset.locale
+            ? localeValue(item, input.dataset.key)
+            : (item[input.dataset.key] ?? '')
         })
 
         container.appendChild(el)
@@ -373,20 +515,30 @@
     function update(el) {
       if (el.dataset.id) {
         data[el.dataset.id] = el.value
-      } else if (el.dataset.section) {
-        data[el.dataset.section][parseInt(el.dataset.index)][el.dataset.key] = el.value
+        return
+      }
+      if (el.dataset.localeId) {
+        ensureIs(data)[el.dataset.localeId] = el.value
+        return
+      }
+      if (!el.dataset.section) return
+      const item = data[el.dataset.section][parseInt(el.dataset.index, 10)]
+      if (el.dataset.locale) {
+        ensureIs(item)[el.dataset.key] = el.value
+      } else {
+        item[el.dataset.key] = el.value
       }
     }
 
     function addItem(section) {
-      data[section].push({ ...schema[section] })
+      data[section].push(JSON.parse(JSON.stringify(schema[section])))
       renderSection(section)
     }
 
     function removeItem(btn) {
       const item = btn.closest('.item')
       const section = item.dataset.section
-      const index = parseInt(item.dataset.index)
+      const index = parseInt(item.dataset.index, 10)
       data[section].splice(index, 1)
       renderSection(section)
     }
@@ -410,7 +562,12 @@
     async function save() {
       const payload = JSON.parse(JSON.stringify(data))
       payload.skills = toArray(payload.skills)
-      payload.skillCategories.forEach(c => c.items = toArray(c.items))
+      ensureIs(payload)
+      payload.locales.is.skills = toArray(payload.locales.is.skills)
+      payload.skillCategories.forEach(c => {
+        c.items = toArray(c.items)
+        if (c.locales?.is) c.locales.is.items = toArray(c.locales.is.items)
+      })
       const btn = document.getElementById('save-btn')
       if (btn) btn.disabled = true
       show('Saving and updating the live site…', false, true)
@@ -435,6 +592,10 @@
         if (btn) btn.disabled = false
       }
     }
+
+    document.getElementById('editor').addEventListener('input', (event) => {
+      if (event.target.matches('[data-id], [data-locale-id]')) update(event.target)
+    })
 
     load()
   </script>
