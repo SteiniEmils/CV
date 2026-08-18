@@ -287,6 +287,11 @@ function rebuildFrontend() {
   })
 }
 
+function namedCertifications(list) {
+  if (!Array.isArray(list)) return []
+  return list.filter((cert) => String(cert?.name || '').trim())
+}
+
 function ensureDataFile() {
   fs.mkdirSync(dataDir, { recursive: true })
   if (!fs.existsSync(dataSeedPath)) {
@@ -306,10 +311,16 @@ function ensureDataFile() {
   const seed = JSON.parse(fs.readFileSync(dataSeedPath, 'utf-8'))
   const added = []
   for (const key of Object.keys(seed)) {
+    if (key === 'certifications') continue
     if (!(key in current)) {
       current[key] = seed[key]
       added.push(key)
     }
+  }
+  const seedCerts = namedCertifications(seed.certifications)
+  if (seedCerts.length > 0 && namedCertifications(current.certifications).length === 0) {
+    current.certifications = seed.certifications
+    added.push('certifications')
   }
   if (added.length === 0) return
   atomicWriteFile(dataPath, JSON.stringify(current, null, 2) + '\n')

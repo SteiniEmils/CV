@@ -310,7 +310,7 @@ function isVisibleCertification(status: string): boolean {
 function EducationLanguagesReferences() {
   const { lang, t } = useLanguage()
   const visibleCertifications = (cv.certifications ?? []).filter((cert) =>
-    isVisibleCertification(String(cert.status)),
+    isVisibleCertification(String(cert.status)) && String(cert.name || '').trim(),
   )
 
   return (
