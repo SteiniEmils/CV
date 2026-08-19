@@ -5,6 +5,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { generateCv } from '../scripts/generate-cv.js'
+import { createAnalytics } from './analytics.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.join(__dirname, '..')
@@ -174,6 +175,8 @@ function atomicWriteFile(filePath, contents) {
     }
   }
 }
+
+const analytics = createAnalytics({ dataDir, atomicWriteFile })
 
 function distHasIndex(dir) {
   return fs.existsSync(path.join(dir, 'index.html'))
@@ -403,6 +406,14 @@ function adminAuth(req, res, next) {
   res.redirect('/admin/login')
 }
 
+app.get('/api/analytics', apiAuth, (req, res) => {
+  try {
+    res.json(analytics.getStats())
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 app.get('/api/cv', apiAuth, (req, res) => {
   try {
     const json = fs.readFileSync(dataPath, 'utf-8')
@@ -482,6 +493,13 @@ app.use('/admin', adminAuth, express.static(adminDir))
 
 app.get('/admin', adminAuth, (req, res) => {
   res.sendFile(path.join(adminDir, 'index.html'))
+})
+
+app.use((req, res, next) => {
+  if (analytics.shouldTrack(req) && !isAuthenticated(req)) {
+    analytics.recordVisit(req)
+  }
+  next()
 })
 
 app.use(express.static(distDir))
