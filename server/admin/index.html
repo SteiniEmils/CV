@@ -450,6 +450,7 @@
   <div class="admin-shell">
     <nav class="admin-nav" aria-label="Editor sections">
       <a href="#sec-visitors">Visitors</a>
+      <a href="#sec-appearance">Appearance</a>
       <a href="#sec-basics">Basics</a>
       <a href="#sec-skills">Skills</a>
       <a href="#sec-skill-categories">Categories</a>
@@ -488,6 +489,28 @@
     </section>
     <form id="editor" style="display:none">
       <p class="hint" style="margin: 0 0 20px">In each list, drag the ⋮⋮ handle or use Up / Down to change order. Save to update the live site.</p>
+      <section id="sec-appearance">
+        <h2>Appearance</h2>
+        <p class="hint" style="margin:-8px 0 18px">Controls the public CV look. Save to rebuild the live site.</p>
+        <div class="grid-2">
+          <div class="field">
+            <label for="settings-appearance">Site layout</label>
+            <select id="settings-appearance" data-settings="appearance">
+              <option value="default">Default (portfolio)</option>
+              <option value="paper">Document (CV on paper)</option>
+            </select>
+            <p class="hint">Portfolio grid with photos, or a continuous document-style CV.</p>
+          </div>
+          <div class="field">
+            <label for="settings-colorScheme">Default color scheme</label>
+            <select id="settings-colorScheme" data-settings="colorScheme">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+            <p class="hint">Starting mode for new visitors. They can switch light/dark on the public site.</p>
+          </div>
+        </div>
+      </section>
       <section id="sec-basics">
         <h2>Basics</h2>
         <div class="grid-2">
@@ -523,24 +546,6 @@
           <div class="field">
             <label for="summary-is">About summary <span class="lang-tag">IS</span></label>
             <textarea id="summary-is" data-locale-id="summary"></textarea>
-          </div>
-        </div>
-        <div class="grid-2" style="margin-top:16px">
-          <div class="field">
-            <label for="settings-appearance">Site layout</label>
-            <select id="settings-appearance" data-settings="appearance">
-              <option value="default">Default (portfolio)</option>
-              <option value="paper">Document (CV on paper)</option>
-            </select>
-            <p class="hint">Public site layout only. Save to apply on the live CV.</p>
-          </div>
-          <div class="field">
-            <label for="settings-colorScheme">Default color scheme</label>
-            <select id="settings-colorScheme" data-settings="colorScheme">
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-            </select>
-            <p class="hint">Starting mode for new visitors. They can still switch light/dark on the public site.</p>
           </div>
         </div>
       </section>
