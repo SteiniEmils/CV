@@ -737,6 +737,10 @@
   margin-top: 28px;
 }
 
+.cv-print-flow > .cv-print-block + .cv-print-block > .cv-section-title {
+  margin-top: 28px;
+}
+
 /* Stats */
 .cv-stats {
   display: grid;
@@ -916,30 +920,124 @@
   }
 
   .cv-main {
-    gap: 14px;
+    display: block;
+    gap: 0;
   }
 
-  .cv-hero,
+  .cv-main > * {
+    margin-bottom: 12px;
+  }
+
+  .cv-section,
+  .cv-two-col,
+  .cv-timeline,
+  .cv-projects-grid,
+  .cv-stats,
+  .cv-print-flow {
+    display: block !important;
+  }
+
   .cv-two-col > .cv-card,
-  .cv-stat,
-  .cv-footer,
-  .cv-timeline-item,
-  .cv-project-featured,
-  .cv-project-card,
-  .cv-cert-list li,
-  .cv-stats {
-    break-inside: avoid;
+  .cv-print-flow > .cv-print-block + .cv-print-block {
+    margin-top: 0;
+  }
+
+  .cv-print-block {
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  .cv-print-flow {
+    break-inside: auto;
+    page-break-inside: auto;
+    border: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .cv-print-flow > .cv-section-title {
+    break-after: avoid;
+    page-break-after: avoid;
+    margin-bottom: 10px;
+    padding: 0 2px;
+  }
+
+  .cv-print-flow > .cv-section-title + .cv-timeline,
+  .cv-print-flow > .cv-section-title + .cv-projects-grid,
+  .cv-print-flow > .cv-section-title + .cv-project-featured {
+    break-before: avoid;
+    page-break-before: avoid;
+  }
+
+  .cv-print-block.cv-card,
+  .cv-print-flow .cv-print-block,
+  .cv-print-flow .cv-timeline-item.cv-print-block,
+  .cv-print-flow .cv-project-featured,
+  .cv-print-flow .cv-project-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+    background: #ffffff;
+  }
+
+  .cv-print-flow .cv-print-block + .cv-print-block {
+    margin-top: 12px;
+  }
+
+  .cv-print-flow .cv-timeline-item.cv-print-block {
+    margin-bottom: 10px;
+    padding-left: 14px;
+    border-left: 2px solid var(--border);
+  }
+
+  .cv-print-flow .cv-timeline-item.cv-print-block:last-child {
+    margin-bottom: 0;
+  }
+
+  .cv-print-flow > .cv-timeline {
+    margin-top: 0;
+  }
+
+  .cv-hero.cv-print-block {
+    border: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    padding: 0 0 12px;
+    margin-bottom: 12px;
+  }
+
+  .cv-stats.cv-print-block {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+    background: #ffffff;
+    font-size: 0;
+  }
+
+  .cv-stats .cv-stat {
+    display: inline-block;
+    width: 25%;
+    vertical-align: top;
+    font-size: 10pt;
+    border: none;
+    border-radius: 0;
+    padding: 0 6px;
+    background: transparent;
+    break-inside: avoid-page;
     page-break-inside: avoid;
   }
 
-  .cv-section > .cv-card:not(.cv-portfolio) {
-    break-inside: auto;
-    page-break-inside: auto;
-  }
-
-  .cv-portfolio {
-    break-inside: auto;
-    page-break-inside: auto;
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
   }
 
   .cv-section-title,
@@ -948,6 +1046,11 @@
   .cv-project-body h3 {
     break-after: avoid;
     page-break-after: avoid;
+  }
+
+  .cv-cert-list li {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
   }
 
   .cv-hero {
@@ -989,8 +1092,16 @@
   }
 
   .cv-two-col {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 12px;
+  }
+
+  .cv-two-col > .cv-card {
+    margin-bottom: 0;
+  }
+
+  .cv-two-col > .cv-card + .cv-card {
+    margin-top: 12px;
   }
 
   .cv-card,
@@ -1000,6 +1111,13 @@
     border-radius: 6px;
     padding: 14px;
     background: #ffffff;
+  }
+
+  .cv-print-flow.cv-card,
+  .cv-print-flow.cv-info {
+    border: none;
+    padding: 0;
+    background: transparent;
   }
 
   .cv-card p,
@@ -1020,7 +1138,7 @@
   }
 
   .cv-info .cv-section-title:last-of-type {
-    margin-top: 16px;
+    margin-top: 0;
   }
 
   .cv-skills-grid {

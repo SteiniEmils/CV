@@ -222,7 +222,7 @@ function Hero() {
   const profile = localize(cv as Record<string, unknown>, lang) as typeof cv
 
   return (
-    <section className="cv-hero" id="about">
+    <section className="cv-hero cv-print-block" id="about">
       <div className="cv-hero-content">
         <span className="cv-eyebrow">{profile.title}</span>
         <h1 className="cv-hero-name">{profile.name}</h1>
@@ -251,14 +251,14 @@ function AboutSkills() {
 
   return (
     <section className="cv-section cv-two-col" id="skills">
-      <div className="cv-card">
+      <div className="cv-card cv-print-block">
         <SectionTitle>{t('aboutMe')}</SectionTitle>
         <p>{profile.summary}</p>
         <a href={`mailto:${cv.email}`} className="cv-link">
           {t('contactMe')} <ArrowIcon />
         </a>
       </div>
-      <div className="cv-card">
+      <div className="cv-card cv-print-block">
         <SectionTitle>{t('technicalSkills')}</SectionTitle>
         <div className="cv-skills-grid">
           {profile.skillCategories?.map((group) => {
@@ -281,13 +281,13 @@ function Experience() {
 
   return (
     <section className="cv-section" id="experience">
-      <div className="cv-card">
+      <div className="cv-card cv-print-flow">
         <SectionTitle>{t('experience')}</SectionTitle>
         <div className="cv-timeline">
           {cv.experience.map((exp, i) => {
             const e = localize(exp as Record<string, unknown> & typeof exp, lang)
             return (
-              <article className="cv-timeline-item" key={`${e.company}-${e.role}-${i}`}>
+              <article className="cv-timeline-item cv-print-block" key={`${e.company}-${e.role}-${i}`}>
                 <h3>{e.role}</h3>
                 <p className="cv-timeline-meta">
                   {e.company} <span>•</span> {e.start} – {e.end === 'Present' ? t('present') : e.end}
@@ -382,7 +382,7 @@ function ProjectCard({
   }
 
   return (
-    <article className={featured ? 'cv-project-featured' : 'cv-project-card'}>
+    <article className={`${featured ? 'cv-project-featured' : 'cv-project-card'} cv-print-block`}>
       {current ? (
         <div className={`cv-project-media${gallery ? ' cv-project-media--gallery' : ''}`}>
           <div className="cv-project-frame">
@@ -476,7 +476,7 @@ function Projects() {
 
   return (
     <section className="cv-section" id="projects">
-      <div className="cv-card cv-portfolio">
+      <div className="cv-card cv-portfolio cv-print-flow">
         <SectionTitle>{t('projects')}</SectionTitle>
         {featured ? <ProjectCard project={featured} featured /> : null}
         {rest.length > 0 ? (
@@ -503,23 +503,25 @@ function EducationLanguagesReferences() {
 
   return (
     <section className="cv-section cv-two-col" id="education">
-      <div className="cv-card">
-        <SectionTitle>{t('education')}</SectionTitle>
-        <div className="cv-timeline">
-          {cv.education.map((edu, i) => {
-            const e = localize(edu as Record<string, unknown> & typeof edu, lang)
-            return (
-              <article className="cv-timeline-item" key={`${e.institution}-${e.degree}-${i}`}>
-                <h3>{e.degree}</h3>
-                <p className="cv-timeline-meta">
-                  {e.institution} <span>•</span> {e.start} – {e.end}
-                </p>
-              </article>
-            )
-          })}
+      <div className="cv-card cv-print-flow">
+        <div className="cv-print-block">
+          <SectionTitle>{t('education')}</SectionTitle>
+          <div className="cv-timeline">
+            {cv.education.map((edu, i) => {
+              const e = localize(edu as Record<string, unknown> & typeof edu, lang)
+              return (
+                <article className="cv-timeline-item" key={`${e.institution}-${e.degree}-${i}`}>
+                  <h3>{e.degree}</h3>
+                  <p className="cv-timeline-meta">
+                    {e.institution} <span>•</span> {e.start} – {e.end}
+                  </p>
+                </article>
+              )
+            })}
+          </div>
         </div>
         {visibleCertifications.length > 0 && (
-          <>
+          <div className="cv-print-block">
             <SectionTitle>{t('certifications')}</SectionTitle>
             <ul className="cv-cert-list">
               {visibleCertifications.map((cert, i) => {
@@ -539,35 +541,39 @@ function EducationLanguagesReferences() {
                 )
               })}
             </ul>
-          </>
+          </div>
         )}
       </div>
-      <div className="cv-card cv-info">
-        <SectionTitle>{t('languages')}</SectionTitle>
-        <ul className="cv-language-list">
-          {cv.languages?.map((language) => {
-            const l = localize(language as Record<string, unknown> & typeof language, lang)
-            return (
-              <li key={l.name}>
-                <strong>{l.name}</strong>
-                <span>{l.proficiency}</span>
-              </li>
-            )
-          })}
-        </ul>
-        <SectionTitle>{t('references')}</SectionTitle>
-        <ul className="cv-reference-list">
-          {cv.references?.map((reference) => {
-            const r = localize(reference as Record<string, unknown> & typeof reference, lang)
-            return (
-              <li key={r.name}>
-                <strong>{r.name}</strong>
-                <span>{r.role}, {r.company}</span>
-                <span>{t('availableOnRequest')}</span>
-              </li>
-            )
-          })}
-        </ul>
+      <div className="cv-card cv-info cv-print-flow">
+        <div className="cv-print-block">
+          <SectionTitle>{t('languages')}</SectionTitle>
+          <ul className="cv-language-list">
+            {cv.languages?.map((language) => {
+              const l = localize(language as Record<string, unknown> & typeof language, lang)
+              return (
+                <li key={l.name}>
+                  <strong>{l.name}</strong>
+                  <span>{l.proficiency}</span>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+        <div className="cv-print-block">
+          <SectionTitle>{t('references')}</SectionTitle>
+          <ul className="cv-reference-list">
+            {cv.references?.map((reference) => {
+              const r = localize(reference as Record<string, unknown> & typeof reference, lang)
+              return (
+                <li key={r.name}>
+                  <strong>{r.name}</strong>
+                  <span>{r.role}, {r.company}</span>
+                  <span>{t('availableOnRequest')}</span>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
       </div>
     </section>
   )
@@ -577,7 +583,7 @@ function Stats() {
   const { lang } = useLanguage()
 
   return (
-    <section className="cv-section cv-stats">
+    <section className="cv-section cv-stats cv-print-block">
       {cv.stats?.map((stat) => {
         const s = localize(stat as Record<string, unknown> & typeof stat, lang)
         return (
@@ -595,7 +601,7 @@ function Footer() {
   const { t } = useLanguage()
 
   return (
-    <footer className="cv-footer" id="contact">
+    <footer className="cv-footer cv-print-block" id="contact">
       <div className="cv-footer-brand">
         <span className="cv-logo-mark">SE</span>
         <div>
