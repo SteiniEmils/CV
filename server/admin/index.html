@@ -525,6 +525,24 @@
             <textarea id="summary-is" data-locale-id="summary"></textarea>
           </div>
         </div>
+        <div class="grid-2" style="margin-top:16px">
+          <div class="field">
+            <label for="settings-appearance">Site layout</label>
+            <select id="settings-appearance" data-settings="appearance">
+              <option value="default">Default (portfolio)</option>
+              <option value="paper">Document (CV on paper)</option>
+            </select>
+            <p class="hint">Default for new visitors. They can still switch layout in the header.</p>
+          </div>
+          <div class="field">
+            <label for="settings-colorScheme">Default color scheme</label>
+            <select id="settings-colorScheme" data-settings="colorScheme">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+            <p class="hint">Default light/dark mode for new visitors.</p>
+          </div>
+        </div>
       </section>
 
       <section id="sec-skills">
@@ -874,6 +892,7 @@
           p.featured = p.featured === true
           p.images = toArray(p.images)
         })
+        ensureSettings()
 
         render()
         bindNav()
@@ -885,6 +904,22 @@
       }
     }
 
+    function ensureSettings() {
+      if (!data.settings || typeof data.settings !== 'object') {
+        data.settings = { appearance: 'default', colorScheme: 'light' }
+      }
+      if (data.settings.appearance !== 'paper') data.settings.appearance = 'default'
+      if (data.settings.colorScheme !== 'dark') data.settings.colorScheme = 'light'
+    }
+
+    function renderSettings() {
+      ensureSettings()
+      document.querySelectorAll('[data-settings]').forEach((el) => {
+        const key = el.dataset.settings
+        el.value = data.settings[key] ?? ''
+      })
+    }
+
     function render() {
       document.querySelectorAll('[data-id]').forEach(el => {
         el.value = data[el.dataset.id] ?? ''
@@ -892,6 +927,7 @@
       document.querySelectorAll('[data-locale-id]').forEach(el => {
         el.value = localeValue(data, el.dataset.localeId)
       })
+      renderSettings()
       Object.keys(schema).forEach(renderSection)
     }
 
@@ -1000,6 +1036,11 @@
     }
 
     function update(el) {
+      if (el.dataset.settings) {
+        ensureSettings()
+        data.settings[el.dataset.settings] = el.value
+        return
+      }
       if (el.dataset.id) {
         data[el.dataset.id] = el.value
         return
@@ -1166,6 +1207,13 @@
         p.featured = p.featured === true
         p.images = toArray(p.images)
       })
+      if (!payload.settings || typeof payload.settings !== 'object') {
+        payload.settings = { appearance: 'default', colorScheme: 'light' }
+      }
+      payload.settings = {
+        appearance: payload.settings.appearance === 'paper' ? 'paper' : 'default',
+        colorScheme: payload.settings.colorScheme === 'dark' ? 'dark' : 'light',
+      }
       const btn = document.getElementById('save-btn')
       if (btn) btn.disabled = true
       show('Saving and updating the live site…', false, true)
@@ -1195,7 +1243,10 @@
       event.preventDefault()
     })
     document.getElementById('editor').addEventListener('input', (event) => {
-      if (event.target.matches('[data-id], [data-locale-id]')) update(event.target)
+      if (event.target.matches('[data-id], [data-locale-id], [data-settings]')) update(event.target)
+    })
+    document.getElementById('editor').addEventListener('change', (event) => {
+      if (event.target.matches('[data-settings]')) update(event.target)
     })
 
     load()

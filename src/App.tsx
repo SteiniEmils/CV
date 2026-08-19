@@ -3,19 +3,28 @@ import { cv } from './data/cv'
 import { useLanguage } from './useLanguage.ts'
 import { localize, type UIKey } from './i18n.ts'
 import photo from './assets/photo.jpg'
+import {
+  APPEARANCE_KEY,
+  applyTheme,
+  COLOR_SCHEME_KEY,
+  normalizeSettings,
+  readStoredAppearance,
+  readStoredColorScheme,
+  type Appearance,
+  type ColorScheme,
+} from './theme.ts'
 import './App.css'
-
-type Theme = 'dark' | 'light'
-
-const THEME_KEY = 'cv-theme'
 
 function printCv() {
   const html = document.documentElement
+  const previousAppearance = html.dataset.appearance
   const previousTheme = html.dataset.theme
-  html.dataset.theme = 'light'
-  html.style.colorScheme = 'light'
+  applyTheme('paper', 'light')
 
   const restore = () => {
+    if (previousAppearance === 'default' || previousAppearance === 'paper') {
+      html.dataset.appearance = previousAppearance
+    }
     if (previousTheme === 'light' || previousTheme === 'dark') {
       html.dataset.theme = previousTheme
       html.style.colorScheme = previousTheme
@@ -99,22 +108,44 @@ const CloseIcon = () => (
   </svg>
 )
 
-function useTheme(): [Theme, () => void] {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'light'
+const DocumentIcon = () => (
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+  </svg>
+)
+
+const PortfolioIcon = () => (
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="7" height="7" rx="1" />
+    <rect x="14" y="3" width="7" height="7" rx="1" />
+    <rect x="3" y="14" width="7" height="7" rx="1" />
+    <rect x="14" y="14" width="7" height="7" rx="1" />
+  </svg>
+)
+
+function useThemePreferences() {
+  const siteDefaults = normalizeSettings(cv.settings)
+
+  const [appearance, setAppearance] = useState<Appearance>(() => {
+    if (typeof window === 'undefined') return siteDefaults.appearance
+    const fromDom = document.documentElement.dataset.appearance
+    if (fromDom === 'default' || fromDom === 'paper') return fromDom
+    return readStoredAppearance(siteDefaults.appearance)
+  })
+
+  const [colorScheme, setColorScheme] = useState<ColorScheme>(() => {
+    if (typeof window === 'undefined') return siteDefaults.colorScheme
     const fromDom = document.documentElement.dataset.theme
     if (fromDom === 'light' || fromDom === 'dark') return fromDom
-    const saved = localStorage.getItem(THEME_KEY)
-    if (saved === 'light' || saved === 'dark') return saved
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    return readStoredColorScheme(siteDefaults.colorScheme)
   })
 
   useLayoutEffect(() => {
-    if (typeof window === 'undefined') return
-    document.documentElement.dataset.theme = theme
-    document.documentElement.style.colorScheme = theme
-    localStorage.setItem(THEME_KEY, theme)
-  }, [theme])
+    applyTheme(appearance, colorScheme)
+    localStorage.setItem(APPEARANCE_KEY, appearance)
+    localStorage.setItem(COLOR_SCHEME_KEY, colorScheme)
+  }, [appearance, colorScheme])
 
   useEffect(() => {
     const id = window.requestAnimationFrame(() => {
@@ -123,11 +154,25 @@ function useTheme(): [Theme, () => void] {
     return () => window.cancelAnimationFrame(id)
   }, [])
 
-  const toggle = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
-  return [theme, toggle]
+  return {
+    appearance,
+    colorScheme,
+    toggleAppearance: () => setAppearance((value) => (value === 'paper' ? 'default' : 'paper')),
+    toggleColorScheme: () => setColorScheme((value) => (value === 'dark' ? 'light' : 'dark')),
+  }
 }
 
-function Header({ theme, onToggle }: { theme: Theme; onToggle: () => void }) {
+function Header({
+  appearance,
+  colorScheme,
+  onToggleAppearance,
+  onToggleColorScheme,
+}: {
+  appearance: Appearance
+  colorScheme: ColorScheme
+  onToggleAppearance: () => void
+  onToggleColorScheme: () => void
+}) {
   const { lang, setLang, t } = useLanguage()
   const [menuOpen, setMenuOpen] = useState(false)
   const headerRef = useRef<HTMLElement>(null)
@@ -195,8 +240,22 @@ function Header({ theme, onToggle }: { theme: Theme; onToggle: () => void }) {
         >
           {lang === 'en' ? 'IS' : 'EN'}
         </button>
-        <button className="cv-theme-toggle" onClick={onToggle} aria-label="Toggle theme">
-          {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+        <button
+          type="button"
+          className="cv-appearance-toggle"
+          onClick={onToggleAppearance}
+          aria-label={appearance === 'paper' ? 'Switch to portfolio layout' : 'Switch to document layout'}
+          title={appearance === 'paper' ? 'Portfolio layout' : 'Document layout'}
+        >
+          {appearance === 'paper' ? <PortfolioIcon /> : <DocumentIcon />}
+        </button>
+        <button
+          type="button"
+          className="cv-theme-toggle"
+          onClick={onToggleColorScheme}
+          aria-label={colorScheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {colorScheme === 'dark' ? <SunIcon /> : <MoonIcon />}
         </button>
         <button
           type="button"
@@ -655,11 +714,16 @@ function Footer() {
 }
 
 function App() {
-  const [theme, toggleTheme] = useTheme()
+  const { appearance, colorScheme, toggleAppearance, toggleColorScheme } = useThemePreferences()
 
   return (
     <div className="cv-page">
-      <Header theme={theme} onToggle={toggleTheme} />
+      <Header
+        appearance={appearance}
+        colorScheme={colorScheme}
+        onToggleAppearance={toggleAppearance}
+        onToggleColorScheme={toggleColorScheme}
+      />
       <main className="cv-main">
         <Hero />
         <AboutSkills />

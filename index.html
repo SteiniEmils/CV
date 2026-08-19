@@ -23,20 +23,35 @@
     <meta name="twitter:description" content="300+ EV chargers installed across homes and industry. Flutter and React apps, self-hosted on Linux." />
     <meta name="twitter:image" content="https://steiniemils.com/images/profile.jpg" />
     <!-- cv-meta:end -->
+    <!-- cv-settings:start -->
+    <script id="cv-site-settings" type="application/json">{"appearance":"default","colorScheme":"light"}</script>
+    <!-- cv-settings:end -->
     <style>
       html { background: #f5f3ef; color-scheme: light; }
       html[data-theme='dark'] { background: #0b1117; color-scheme: dark; }
+      html[data-appearance='paper'][data-theme='light'] { background: #4f4c47; color-scheme: light; }
+      html[data-appearance='paper'][data-theme='dark'] { background: #070708; color-scheme: dark; }
       @media print {
-        html, html[data-theme='dark'] { background: #ffffff !important; color-scheme: light; }
+        html, html[data-theme='dark'], html[data-appearance='paper'] { background: #ffffff !important; color-scheme: light; }
       }
     </style>
     <script>
       (function () {
         try {
-          var saved = localStorage.getItem('cv-theme')
-          var theme = saved === 'light' || saved === 'dark'
-            ? saved
-            : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          var site = { appearance: 'default', colorScheme: 'light' }
+          var settingsEl = document.getElementById('cv-site-settings')
+          if (settingsEl && settingsEl.textContent) {
+            site = JSON.parse(settingsEl.textContent)
+          }
+          var savedAppearance = localStorage.getItem('cv-appearance')
+          var savedTheme = localStorage.getItem('cv-theme')
+          var appearance = savedAppearance === 'paper' || savedAppearance === 'default'
+            ? savedAppearance
+            : (site.appearance === 'paper' ? 'paper' : 'default')
+          var theme = savedTheme === 'light' || savedTheme === 'dark'
+            ? savedTheme
+            : (site.colorScheme === 'dark' ? 'dark' : 'light')
+          document.documentElement.dataset.appearance = appearance
           document.documentElement.dataset.theme = theme
           document.documentElement.style.colorScheme = theme
         } catch (e) {}

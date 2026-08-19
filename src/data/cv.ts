@@ -44,6 +44,11 @@ export type Certification = {
   status: 'doing' | 'done' | 'not-started'
 }
 
+export type SiteSettings = {
+  appearance: 'default' | 'paper'
+  colorScheme: 'light' | 'dark'
+}
+
 export const cv = {
   "name": "Þorsteinn Emilsson",
   "title": "Electrician · Developer",
@@ -521,5 +526,9 @@ export const cv = {
         }
       }
     }
-  ]
+  ],
+  "settings": {
+    "appearance": "default",
+    "colorScheme": "light"
+  }
 } as const

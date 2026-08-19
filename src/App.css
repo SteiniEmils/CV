@@ -108,7 +108,8 @@
   }
 }
 
-.cv-theme-toggle {
+.cv-theme-toggle,
+.cv-appearance-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -122,7 +123,8 @@
   transition: all 0.2s ease;
 }
 
-.cv-theme-toggle:hover {
+.cv-theme-toggle:hover,
+.cv-appearance-toggle:hover {
   border-color: var(--accent);
   color: var(--accent);
 }
@@ -856,6 +858,176 @@
   flex-shrink: 0;
 }
 
+/* Document theme — continuous CV-on-paper layout (screen only) */
+html[data-appearance='paper'] body {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+html[data-appearance='paper'] .cv-page {
+  max-width: 820px;
+  margin: 28px auto 56px;
+  padding: 44px 52px 52px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+html[data-appearance='paper'][data-theme='dark'] .cv-page {
+  border: 1px solid var(--border);
+}
+
+html[data-appearance='paper'] .cv-header {
+  backdrop-filter: none;
+  background: transparent;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+  padding-bottom: 16px;
+}
+
+html[data-appearance='paper'] .cv-main {
+  gap: 0;
+}
+
+html[data-appearance='paper'] .cv-hero {
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  padding: 8px 0 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+html[data-appearance='paper'] .cv-hero-name {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+
+html[data-appearance='paper'] .cv-eyebrow {
+  letter-spacing: 0.1em;
+  font-size: 0.78rem;
+}
+
+html[data-appearance='paper'] .cv-hero-summary {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  max-width: none;
+}
+
+html[data-appearance='paper'] .cv-hero-image img {
+  width: 92px;
+  height: 92px;
+  border-radius: 4px;
+  box-shadow: none;
+  object-fit: cover;
+}
+
+html[data-appearance='paper'] .cv-card,
+html[data-appearance='paper'] .cv-footer {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  border-top: 1px solid var(--border);
+  padding: 26px 0;
+}
+
+html[data-appearance='paper'] .cv-two-col {
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+html[data-appearance='paper'] .cv-two-col > .cv-card + .cv-card {
+  margin-top: 0;
+}
+
+html[data-appearance='paper'] .cv-section-title {
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+html[data-appearance='paper'] .cv-section-title::before {
+  display: none;
+}
+
+html[data-appearance='paper'] .cv-info .cv-section-title:last-of-type,
+html[data-appearance='paper'] .cv-print-flow > .cv-print-block + .cv-print-block > .cv-section-title {
+  margin-top: 24px;
+}
+
+html[data-appearance='paper'] .cv-project-media,
+html[data-appearance='paper'] .cv-project-thumbs {
+  display: none !important;
+}
+
+html[data-appearance='paper'] .cv-project-featured,
+html[data-appearance='paper'] .cv-project-card {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 18px 0;
+  margin: 0;
+}
+
+html[data-appearance='paper'] .cv-project-featured {
+  padding-bottom: 22px;
+  margin-bottom: 0;
+}
+
+html[data-appearance='paper'] .cv-projects-grid {
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+html[data-appearance='paper'] .cv-stats {
+  gap: 12px;
+  padding-top: 8px;
+}
+
+html[data-appearance='paper'] .cv-stat {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: none;
+  padding: 14px 10px;
+}
+
+html[data-appearance='paper'] .cv-stat-value {
+  font-size: 1.6rem;
+}
+
+html[data-appearance='paper'] .cv-timeline-item {
+  border-left-color: color-mix(in srgb, var(--border) 80%, var(--accent));
+}
+
+html[data-appearance='paper'] .cv-button-outline {
+  background: transparent;
+}
+
+html[data-appearance='paper'] .cv-logo-mark {
+  border-radius: 4px;
+}
+
+@media (max-width: 760px) {
+  html[data-appearance='paper'] .cv-page {
+    margin: 0;
+    padding: 28px 20px 40px;
+    box-shadow: none;
+  }
+
+  html[data-appearance='paper'][data-theme='dark'] .cv-page {
+    border: none;
+  }
+
+  html[data-appearance='paper'] .cv-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Print — A4 layout, light theme, keep sections on one page when possible */
 @media print {
   @page {
@@ -907,6 +1079,7 @@
   .cv-header,
   .cv-hero-actions,
   .cv-theme-toggle,
+  .cv-appearance-toggle,
   .cv-lang-toggle,
   .cv-menu-toggle,
   .cv-link,

@@ -479,5 +479,9 @@
         }
       }
     }
-  ]
+  ],
+  "settings": {
+    "appearance": "default",
+    "colorScheme": "light"
+  }
 }

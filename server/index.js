@@ -437,9 +437,26 @@ function ensureDataFile() {
       }
     }
   }
+  if (!current.settings || typeof current.settings !== 'object') {
+    current.settings = seed.settings || { appearance: 'default', colorScheme: 'light' }
+    added.push('settings')
+  }
   if (added.length === 0) return
   atomicWriteFile(dataPath, JSON.stringify(current, null, 2) + '\n')
   console.log('Merged missing fields from seed into data/cv.json:', added.join(', '))
+}
+
+function readSiteSettings() {
+  try {
+    const current = JSON.parse(fs.readFileSync(dataPath, 'utf-8'))
+    const settings = current.settings && typeof current.settings === 'object' ? current.settings : {}
+    return {
+      appearance: settings.appearance === 'paper' ? 'paper' : 'default',
+      colorScheme: settings.colorScheme === 'dark' ? 'dark' : 'light',
+    }
+  } catch {
+    return { appearance: 'default', colorScheme: 'light' }
+  }
 }
 
 function apiAuth(req, res, next) {
@@ -456,6 +473,10 @@ function adminAuth(req, res, next) {
 
 app.get('/health', (req, res) => {
   res.status(200).json({ ok: true })
+})
+
+app.get('/api/settings', (req, res) => {
+  res.json(readSiteSettings())
 })
 
 app.get('/api/analytics', apiAuth, (req, res) => {
