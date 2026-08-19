@@ -313,27 +313,106 @@ function ProjectCard({
   const shots = projectShots(project)
   const logo = String(p.logo || '').trim()
   const chips = techList(String(p.tech || ''))
-  const [active, setActive] = useState(shots[0] || '')
-  const current = shots.includes(active) ? active : shots[0] || ''
+  const [index, setIndex] = useState(0)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const dragRef = useRef<{ id: number; startX: number; startScroll: number } | null>(null)
+  const current = shots[index] ?? shots[0] ?? ''
   const gallery = shots.length > 1
+
+  const goTo = (next: number) => {
+    const clamped = Math.max(0, Math.min(shots.length - 1, next))
+    const track = trackRef.current
+    if (!track) {
+      setIndex(clamped)
+      return
+    }
+    track.scrollTo({ left: clamped * track.clientWidth, behavior: 'smooth' })
+  }
+
+  const onScroll = () => {
+    const track = trackRef.current
+    if (!track || track.clientWidth === 0) return
+    const next = Math.round(track.scrollLeft / track.clientWidth)
+    if (next !== index && next >= 0 && next < shots.length) setIndex(next)
+  }
+
+  const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!gallery || event.pointerType !== 'mouse' || event.button !== 0) return
+    const track = trackRef.current
+    if (!track) return
+    dragRef.current = { id: event.pointerId, startX: event.clientX, startScroll: track.scrollLeft }
+    track.classList.add('is-dragging')
+    track.setPointerCapture(event.pointerId)
+  }
+
+  const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current
+    const track = trackRef.current
+    if (!drag || drag.id !== event.pointerId || !track) return
+    track.scrollLeft = drag.startScroll - (event.clientX - drag.startX)
+  }
+
+  const endDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current
+    const track = trackRef.current
+    if (!drag || drag.id !== event.pointerId || !track) return
+    dragRef.current = null
+    track.classList.remove('is-dragging')
+    if (track.hasPointerCapture(event.pointerId)) track.releasePointerCapture(event.pointerId)
+    const next = Math.round(track.scrollLeft / Math.max(track.clientWidth, 1))
+    goTo(next)
+  }
 
   return (
     <article className={featured ? 'cv-project-featured' : 'cv-project-card'}>
       {current ? (
         <div className={`cv-project-media${gallery ? ' cv-project-media--gallery' : ''}`}>
           <div className="cv-project-frame">
-            <img src={current} alt="" />
+            {gallery ? (
+              <div
+                ref={trackRef}
+                className="cv-project-track"
+                tabIndex={0}
+                role="region"
+                aria-roledescription="carousel"
+                aria-label={`${p.name} photos`}
+                onScroll={onScroll}
+                onPointerDown={onPointerDown}
+                onPointerMove={onPointerMove}
+                onPointerUp={endDrag}
+                onPointerCancel={endDrag}
+                onKeyDown={(event) => {
+                  if (event.key === 'ArrowRight') {
+                    event.preventDefault()
+                    goTo(index + 1)
+                  }
+                  if (event.key === 'ArrowLeft') {
+                    event.preventDefault()
+                    goTo(index - 1)
+                  }
+                }}
+              >
+                {shots.map((src) => (
+                  <div className="cv-project-slide" key={src}>
+                    <img src={src} alt="" draggable={false} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <img src={current} alt="" />
+            )}
             {logo ? <img className="cv-project-logo" src={logo} alt="" /> : null}
           </div>
           {gallery ? (
             <div className="cv-project-thumbs" role="list">
-              {shots.map((src, index) => (
+              {shots.map((src, shot) => (
                 <button
                   key={src}
                   type="button"
                   className={src === current ? 'is-active' : ''}
-                  aria-label={`${p.name} ${index + 1}`}
-                  onClick={() => setActive(src)}
+                  aria-label={`${p.name} ${shot + 1} of ${shots.length}`}
+                  aria-current={shot === index ? 'true' : undefined}
+                  onClick={() => goTo(shot)}
                 >
                   <img src={src} alt="" />
                 </button>
