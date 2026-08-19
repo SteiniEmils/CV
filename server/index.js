@@ -27,6 +27,8 @@ const viteBin = path.join(rootDir, 'node_modules', 'vite', 'bin', 'vite.js')
 const SESSION_COOKIE = 'cv_session'
 const BUILD_TIMEOUT_MS = 90_000
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000
+const LOGIN_RATE_WINDOW_MS = 15 * 60 * 1000
+const LOGIN_RATE_MAX_ATTEMPTS = 8
 const isProduction = process.env.NODE_ENV === 'production'
 const isDev = !isProduction
 
@@ -62,6 +64,7 @@ const cookieOptions = {
 }
 
 const sessions = new Map()
+const loginAttempts = new Map()
 let saveChain = Promise.resolve()
 
 function parseCookies(req) {
@@ -150,6 +153,51 @@ function clearAuthCookie(res) {
 function destroySession(token) {
   const session = readSession(token)
   if (session) sessions.delete(session.id)
+}
+
+function clientIp(req) {
+  const cf = req.headers['cf-connecting-ip']
+  if (typeof cf === 'string' && cf.trim()) return cf.trim()
+  const forwarded = req.headers['x-forwarded-for']
+  if (typeof forwarded === 'string' && forwarded.trim()) {
+    return forwarded.split(',')[0].trim()
+  }
+  return req.socket?.remoteAddress || 'unknown'
+}
+
+function pruneLoginAttempts() {
+  const now = Date.now()
+  for (const [ip, entry] of loginAttempts) {
+    if (entry.resetAt <= now) loginAttempts.delete(ip)
+  }
+}
+
+function loginRateStatus(ip) {
+  pruneLoginAttempts()
+  const entry = loginAttempts.get(ip)
+  if (!entry) {
+    return { limited: false, retryAfterSec: 0 }
+  }
+  const retryAfterSec = Math.max(0, Math.ceil((entry.resetAt - Date.now()) / 1000))
+  return {
+    limited: entry.count >= LOGIN_RATE_MAX_ATTEMPTS && retryAfterSec > 0,
+    retryAfterSec,
+  }
+}
+
+function recordFailedLogin(ip) {
+  pruneLoginAttempts()
+  const now = Date.now()
+  const entry = loginAttempts.get(ip)
+  if (!entry || entry.resetAt <= now) {
+    loginAttempts.set(ip, { count: 1, resetAt: now + LOGIN_RATE_WINDOW_MS })
+    return
+  }
+  entry.count += 1
+}
+
+function clearLoginAttempts(ip) {
+  loginAttempts.delete(ip)
 }
 
 function enqueueSave(task) {
@@ -406,6 +454,10 @@ function adminAuth(req, res, next) {
   res.redirect('/admin/login')
 }
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ ok: true })
+})
+
 app.get('/api/analytics', apiAuth, (req, res) => {
   try {
     res.json(analytics.getStats())
@@ -473,13 +525,23 @@ app.get('/admin/login', (req, res) => {
 })
 
 app.post('/admin/login', (req, res) => {
+  const ip = clientIp(req)
+  const rate = loginRateStatus(ip)
+  if (rate.limited) {
+    res.status(429).type('text/plain').send(`Too many login attempts. Try again in ${rate.retryAfterSec} seconds.`)
+    return
+  }
+
   const { password } = req.body || {}
   if (passwordMatches(password)) {
+    clearLoginAttempts(ip)
     setAuthCookie(res)
     res.redirect('/admin')
-  } else {
-    res.redirect('/admin/login?error=1')
+    return
   }
+
+  recordFailedLogin(ip)
+  res.redirect('/admin/login?error=1')
 })
 
 app.post('/admin/logout', (req, res) => {

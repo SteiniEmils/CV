@@ -50,5 +50,6 @@ In Coolify:
    - `ADMIN_PASSWORD` — a strong password (required; the server will not start without it).
    - `SESSION_SECRET` — a long random string used to sign admin session cookies (required).
 5. Add a persistent volume mounted at `/app/data` so CV edits survive restarts and redeploys. An empty volume is seeded from the image on first boot; after that, admin Save updates this directory and rebuilds the live site into `dist/`.
-6. Point your domain to the resource.
-7. Visit `https://your-domain.com/admin` and log in with `ADMIN_PASSWORD`.
+6. Optional: set the health check path to **`/health`** (returns `{ "ok": true }`).
+7. Point your domain to the resource.
+8. Visit `https://your-domain.com/admin` and log in with `ADMIN_PASSWORD`.
