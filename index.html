@@ -43,11 +43,8 @@
           if (settingsEl && settingsEl.textContent) {
             site = JSON.parse(settingsEl.textContent)
           }
-          var savedAppearance = localStorage.getItem('cv-appearance')
+          var appearance = site.appearance === 'paper' ? 'paper' : 'default'
           var savedTheme = localStorage.getItem('cv-theme')
-          var appearance = savedAppearance === 'paper' || savedAppearance === 'default'
-            ? savedAppearance
-            : (site.appearance === 'paper' ? 'paper' : 'default')
           var theme = savedTheme === 'light' || savedTheme === 'dark'
             ? savedTheme
             : (site.colorScheme === 'dark' ? 'dark' : 'light')

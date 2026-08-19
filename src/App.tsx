@@ -4,13 +4,10 @@ import { useLanguage } from './useLanguage.ts'
 import { localize, type UIKey } from './i18n.ts'
 import photo from './assets/photo.jpg'
 import {
-  APPEARANCE_KEY,
   applyTheme,
   COLOR_SCHEME_KEY,
   normalizeSettings,
-  readStoredAppearance,
   readStoredColorScheme,
-  type Appearance,
   type ColorScheme,
 } from './theme.ts'
 import './App.css'
@@ -96,54 +93,25 @@ const MoonIcon = () => (
   </svg>
 )
 
-const MenuIcon = () => (
-  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 6h16M4 12h16M4 18h16" />
-  </svg>
-)
-
 const CloseIcon = () => (
   <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M18 6 6 18M6 6l12 12" />
   </svg>
 )
 
-const DocumentIcon = () => (
-  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
-  </svg>
-)
-
-const PortfolioIcon = () => (
-  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="7" height="7" rx="1" />
-    <rect x="14" y="3" width="7" height="7" rx="1" />
-    <rect x="3" y="14" width="7" height="7" rx="1" />
-    <rect x="14" y="14" width="7" height="7" rx="1" />
-  </svg>
-)
-
-function useThemePreferences() {
-  const siteDefaults = normalizeSettings(cv.settings)
-
-  const [appearance, setAppearance] = useState<Appearance>(() => {
-    if (typeof window === 'undefined') return siteDefaults.appearance
-    const fromDom = document.documentElement.dataset.appearance
-    if (fromDom === 'default' || fromDom === 'paper') return fromDom
-    return readStoredAppearance(siteDefaults.appearance)
-  })
+function useSiteTheme() {
+  const settings = normalizeSettings(cv.settings)
+  const appearance = settings.appearance
 
   const [colorScheme, setColorScheme] = useState<ColorScheme>(() => {
-    if (typeof window === 'undefined') return siteDefaults.colorScheme
+    if (typeof window === 'undefined') return settings.colorScheme
     const fromDom = document.documentElement.dataset.theme
     if (fromDom === 'light' || fromDom === 'dark') return fromDom
-    return readStoredColorScheme(siteDefaults.colorScheme)
+    return readStoredColorScheme(settings.colorScheme)
   })
 
   useLayoutEffect(() => {
     applyTheme(appearance, colorScheme)
-    localStorage.setItem(APPEARANCE_KEY, appearance)
     localStorage.setItem(COLOR_SCHEME_KEY, colorScheme)
   }, [appearance, colorScheme])
 
@@ -154,25 +122,18 @@ function useThemePreferences() {
     return () => window.cancelAnimationFrame(id)
   }, [])
 
-  return {
-    appearance,
-    colorScheme,
-    toggleAppearance: () => setAppearance((value) => (value === 'paper' ? 'default' : 'paper')),
-    toggleColorScheme: () => setColorScheme((value) => (value === 'dark' ? 'light' : 'dark')),
-  }
+  const toggleColorScheme = () => setColorScheme((value) => (value === 'dark' ? 'light' : 'dark'))
+
+  return { colorScheme, toggleColorScheme }
 }
 
-function Header({
-  appearance,
-  colorScheme,
-  onToggleAppearance,
-  onToggleColorScheme,
-}: {
-  appearance: Appearance
-  colorScheme: ColorScheme
-  onToggleAppearance: () => void
-  onToggleColorScheme: () => void
-}) {
+const MenuIcon = () => (
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+)
+
+function Header({ colorScheme, onToggleColorScheme }: { colorScheme: ColorScheme; onToggleColorScheme: () => void }) {
   const { lang, setLang, t } = useLanguage()
   const [menuOpen, setMenuOpen] = useState(false)
   const headerRef = useRef<HTMLElement>(null)
@@ -239,15 +200,6 @@ function Header({
           aria-label={lang === 'en' ? 'Switch to Icelandic' : 'Switch to English'}
         >
           {lang === 'en' ? 'IS' : 'EN'}
-        </button>
-        <button
-          type="button"
-          className="cv-appearance-toggle"
-          onClick={onToggleAppearance}
-          aria-label={appearance === 'paper' ? 'Switch to portfolio layout' : 'Switch to document layout'}
-          title={appearance === 'paper' ? 'Portfolio layout' : 'Document layout'}
-        >
-          {appearance === 'paper' ? <PortfolioIcon /> : <DocumentIcon />}
         </button>
         <button
           type="button"
@@ -714,16 +666,11 @@ function Footer() {
 }
 
 function App() {
-  const { appearance, colorScheme, toggleAppearance, toggleColorScheme } = useThemePreferences()
+  const { colorScheme, toggleColorScheme } = useSiteTheme()
 
   return (
     <div className="cv-page">
-      <Header
-        appearance={appearance}
-        colorScheme={colorScheme}
-        onToggleAppearance={toggleAppearance}
-        onToggleColorScheme={toggleColorScheme}
-      />
+      <Header colorScheme={colorScheme} onToggleColorScheme={toggleColorScheme} />
       <main className="cv-main">
         <Hero />
         <AboutSkills />

@@ -6,7 +6,6 @@ export type SiteSettings = {
   colorScheme: ColorScheme
 }
 
-export const APPEARANCE_KEY = 'cv-appearance'
 export const COLOR_SCHEME_KEY = 'cv-theme'
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
@@ -39,12 +38,6 @@ export function applyTheme(appearance: Appearance, colorScheme: ColorScheme) {
   html.dataset.appearance = appearance
   html.dataset.theme = colorScheme
   html.style.colorScheme = colorScheme
-}
-
-export function readStoredAppearance(fallback: Appearance): Appearance {
-  if (typeof window === 'undefined') return fallback
-  const saved = localStorage.getItem(APPEARANCE_KEY)
-  return saved === 'paper' || saved === 'default' ? saved : fallback
 }
 
 export function readStoredColorScheme(fallback: ColorScheme): ColorScheme {
