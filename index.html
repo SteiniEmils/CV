@@ -11,6 +11,9 @@
     <style>
       html { background: #f5f3ef; color-scheme: light; }
       html[data-theme='dark'] { background: #0b1117; color-scheme: dark; }
+      @media print {
+        html, html[data-theme='dark'] { background: #ffffff !important; color-scheme: light; }
+      }
     </style>
     <script>
       (function () {

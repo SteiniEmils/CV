@@ -9,6 +9,24 @@ type Theme = 'dark' | 'light'
 
 const THEME_KEY = 'cv-theme'
 
+function printCv() {
+  const html = document.documentElement
+  const previousTheme = html.dataset.theme
+  html.dataset.theme = 'light'
+  html.style.colorScheme = 'light'
+
+  const restore = () => {
+    if (previousTheme === 'light' || previousTheme === 'dark') {
+      html.dataset.theme = previousTheme
+      html.style.colorScheme = previousTheme
+    }
+    window.removeEventListener('afterprint', restore)
+  }
+
+  window.addEventListener('afterprint', restore)
+  window.print()
+}
+
 const PrintIcon = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M6 9V2h12v7" />
@@ -210,7 +228,7 @@ function Hero() {
         <h1 className="cv-hero-name">{profile.name}</h1>
         <p className="cv-hero-summary">{profile.hook}</p>
         <div className="cv-hero-actions">
-          <button type="button" className="cv-button cv-button-primary" onClick={() => window.print()}>
+          <button type="button" className="cv-button cv-button-primary" onClick={printCv}>
             <PrintIcon />
             {t('print')}
           </button>

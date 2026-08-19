@@ -95,6 +95,19 @@ html.theme-ready .cv-tech-chip {
   }
 }
 
+@media print {
+  html,
+  html[data-theme='dark'] {
+    background: #ffffff !important;
+    color-scheme: light;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #111a22 !important;
+  }
+}
+
 button,
 a {
   color: inherit;
