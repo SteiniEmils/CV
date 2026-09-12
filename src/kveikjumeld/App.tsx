@@ -65,7 +65,7 @@ const copy = {
     heroLead: 'Fullkomin á pallinn eða svalirnar.',
     ctaPrimary: 'Hafðu samband',
     ctaStones: 'Veldu stein',
-    proof: ['Handsmíðað', 'Gaslogi', 'Steinn frá Granítsmiðjunni', 'Á hjólum'],
+    proof: ['Handsmíðað', 'Gaslogi', 'Granítplata', 'Á hjólum'],
     aboutEyebrow: 'Handverk',
     aboutTitle: 'Unnið af ástríðu',
     aboutBody:
@@ -111,7 +111,7 @@ const copy = {
     heroLead: 'Made for the deck or the balcony.',
     ctaPrimary: 'Get in touch',
     ctaStones: 'Choose a stone',
-    proof: ['Handmade', 'Gas flame', 'Stone with Granítsmiðjan', 'On wheels'],
+    proof: ['Handmade', 'Gas flame', 'Stone top', 'On wheels'],
     aboutEyebrow: 'Craft',
     aboutTitle: 'Made with care',
     aboutBody:
@@ -161,6 +161,7 @@ function App() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
+  const [showDock, setShowDock] = useState(false)
 
   const t = copy[lang]
   const stone = stones[stoneIndex]
@@ -181,6 +182,28 @@ function App() {
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    const hero = document.querySelector('.km-hero')
+    const contact = document.getElementById('samband')
+    if (!hero || !contact) return
+
+    const syncDock = () => {
+      const heroBox = hero.getBoundingClientRect()
+      const contactBox = contact.getBoundingClientRect()
+      const heroStillInView = heroBox.bottom > 120
+      const contactInView = contactBox.top < window.innerHeight - 80
+      setShowDock(!heroStillInView && !contactInView)
+    }
+
+    syncDock()
+    window.addEventListener('scroll', syncDock, { passive: true })
+    window.addEventListener('resize', syncDock)
+    return () => {
+      window.removeEventListener('scroll', syncDock)
+      window.removeEventListener('resize', syncDock)
+    }
   }, [])
 
   useEffect(() => {
@@ -400,7 +423,7 @@ function App() {
           <p className="km-demo">{t.demo}</p>
         </footer>
 
-        <div className="km-dock">
+        <div className={`km-dock${showDock ? ' is-visible' : ''}`}>
           <a className="km-btn km-btn-primary km-btn-block" href="#samband">
             {t.ctaPrimary}
           </a>
