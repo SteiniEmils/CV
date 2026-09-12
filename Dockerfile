@@ -27,6 +27,7 @@ COPY --from=build /app/server ./server
 COPY --from=build /app/src ./src
 COPY --from=build /app/public ./public
 COPY --from=build /app/index.html ./index.html
+COPY --from=build /app/kveikjumeld ./kveikjumeld
 COPY --from=build /app/vite.config.ts ./vite.config.ts
 COPY --from=build /app/tsconfig.json ./tsconfig.json
 COPY --from=build /app/tsconfig.app.json ./tsconfig.app.json

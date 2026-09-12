@@ -1,0 +1,582 @@
+:root {
+  --km-night: #14110e;
+  --km-ink: #1c1612;
+  --km-paper: #f4eee6;
+  --km-paper-2: #ebe3d7;
+  --km-ember: #e28a4a;
+  --km-ember-deep: #c56a2c;
+  --km-cream: #f7f1e8;
+  --km-muted: rgba(244, 238, 230, 0.68);
+  --km-line: rgba(255, 255, 255, 0.12);
+  --km-serif: 'Cormorant Garamond', 'Times New Roman', serif;
+  --km-sans: 'Outfit', system-ui, sans-serif;
+  --km-radius: 18px;
+  --km-pad: 22px;
+  --km-dock: calc(76px + env(safe-area-inset-bottom));
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body,
+#kveikjumeld-root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--km-sans);
+  background: #070605;
+  color: var(--km-cream);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+textarea,
+a {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+.km-shell {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgba(226, 138, 74, 0.16), transparent 52%),
+    #070605;
+}
+
+.km-ambient {
+  display: none;
+}
+
+.km-phone {
+  width: min(100%, 430px);
+  min-height: 100dvh;
+  background: var(--km-night);
+  position: relative;
+  padding-bottom: var(--km-dock);
+}
+
+.km-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
+  background: linear-gradient(to bottom, rgba(20, 17, 14, 0.88), rgba(20, 17, 14, 0.55) 70%, transparent);
+}
+
+.km-header.is-scrolled {
+  background: rgba(20, 17, 14, 0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--km-line);
+}
+
+.km-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 550;
+}
+
+.km-mark {
+  width: 22px;
+  height: 22px;
+  fill: var(--km-ember);
+}
+
+.km-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.km-lang,
+.km-menu-btn {
+  border: 0;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--km-cream);
+  min-height: 44px;
+  border-radius: 999px;
+}
+
+.km-lang {
+  padding: 0 14px;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.km-menu-btn {
+  width: 44px;
+  display: grid;
+  place-items: center;
+  gap: 6px;
+}
+
+.km-menu-btn span {
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform 0.2s ease;
+}
+
+.km-menu-btn.is-open span:first-child {
+  transform: translateY(3.75px) rotate(45deg);
+}
+
+.km-menu-btn.is-open span:last-child {
+  transform: translateY(-3.75px) rotate(-45deg);
+}
+
+.km-menu {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100%, 430px);
+  z-index: 30;
+  background: rgba(12, 10, 8, 0.96);
+  padding: 96px 28px 40px;
+  display: grid;
+  align-content: start;
+  gap: 28px;
+}
+
+.km-menu[hidden] {
+  display: none;
+}
+
+.km-menu nav {
+  display: grid;
+  gap: 8px;
+}
+
+.km-menu a {
+  font-family: var(--km-serif);
+  font-size: 2.4rem;
+  text-decoration: none;
+  line-height: 1.1;
+}
+
+.km-menu-note {
+  color: var(--km-muted);
+  font-size: 0.88rem;
+  max-width: 16rem;
+}
+
+.km-hero {
+  position: relative;
+  min-height: 92dvh;
+  margin-top: -68px;
+  display: grid;
+  align-items: end;
+}
+
+.km-hero-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 52% 62%;
+}
+
+.km-hero-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(12, 10, 8, 0.92) 0%, rgba(12, 10, 8, 0.28) 42%, rgba(12, 10, 8, 0.2) 100%),
+    linear-gradient(to bottom, rgba(12, 10, 8, 0.45), transparent 22%);
+}
+
+.km-hero-copy,
+.km-section,
+.km-craft-copy,
+.km-footer {
+  position: relative;
+  padding: 28px var(--km-pad);
+}
+
+.km-hero-copy {
+  padding-bottom: 36px;
+}
+
+.km-eyebrow {
+  margin: 0 0 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  color: var(--km-ember);
+  font-weight: 550;
+}
+
+.km-eyebrow.dark {
+  color: var(--km-ember-deep);
+}
+
+h1,
+h2,
+.km-stone-caption h3,
+.km-points h3 {
+  font-family: var(--km-serif);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(3.2rem, 16vw, 4.4rem);
+  line-height: 0.9;
+}
+
+h2 {
+  font-size: 2.15rem;
+  line-height: 1.05;
+  margin-bottom: 12px;
+}
+
+.km-lead {
+  margin: 12px 0 22px;
+  font-size: 1.12rem;
+  color: var(--km-muted);
+}
+
+.km-hero-actions,
+.km-stone-row {
+  display: grid;
+  gap: 10px;
+}
+
+.km-hero-actions {
+  grid-template-columns: 1fr 1fr;
+}
+
+.km-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+  font-weight: 550;
+  font-size: 0.92rem;
+}
+
+.km-btn-primary {
+  background: var(--km-ember);
+  color: #1a120c;
+}
+
+.km-btn-ghost {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--km-cream);
+  border: 1px solid var(--km-line);
+}
+
+.km-btn-block {
+  width: 100%;
+}
+
+.km-proof {
+  list-style: none;
+  margin: 0;
+  padding: 18px var(--km-pad) 6px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.km-proof::-webkit-scrollbar {
+  display: none;
+}
+
+.km-proof li {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  border: 1px solid var(--km-line);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--km-muted);
+}
+
+.km-paper {
+  background: var(--km-paper);
+  color: var(--km-ink);
+}
+
+.km-body {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: #4a433c;
+}
+
+.km-body.light {
+  color: var(--km-muted);
+}
+
+.km-craft {
+  position: relative;
+  min-height: 420px;
+  display: grid;
+  align-items: end;
+}
+
+.km-craft img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.km-craft-copy {
+  background: linear-gradient(to top, rgba(10, 8, 6, 0.92), rgba(10, 8, 6, 0.08));
+}
+
+.km-craft-copy p {
+  margin: 0;
+  color: var(--km-muted);
+  line-height: 1.5;
+}
+
+.km-points {
+  display: grid;
+  gap: 18px;
+  padding-top: 8px;
+}
+
+.km-points article {
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(28, 22, 18, 0.12);
+}
+
+.km-points article:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.km-points h3 {
+  font-size: 1.55rem;
+  margin-bottom: 6px;
+}
+
+.km-points p {
+  margin: 0;
+  color: #5a534c;
+  line-height: 1.45;
+}
+
+.km-stones {
+  background: #100e0c;
+}
+
+.km-stone-stage {
+  margin: 22px 0 16px;
+  border-radius: var(--km-radius);
+  overflow: hidden;
+  background: #0b0a09;
+}
+
+.km-stone-stage img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.km-stone-caption {
+  padding: 16px 16px 18px;
+}
+
+.km-stone-kind {
+  margin: 0 0 4px;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--km-ember);
+}
+
+.km-stone-caption p:last-child {
+  margin: 8px 0 0;
+  color: var(--km-muted);
+  line-height: 1.45;
+}
+
+.km-stone-row {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.km-stone-row button {
+  appearance: none;
+  border: 1px solid transparent;
+  background: #1b1714;
+  color: var(--km-cream);
+  border-radius: 14px;
+  padding: 6px;
+  min-height: 92px;
+  display: grid;
+  gap: 6px;
+}
+
+.km-stone-row button.is-active {
+  border-color: var(--km-ember);
+}
+
+.km-stone-row img {
+  width: 100%;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.km-stone-row span {
+  font-size: 0.62rem;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.km-contact {
+  background: var(--km-paper-2);
+  color: var(--km-ink);
+}
+
+.km-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.km-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+}
+
+.km-form input,
+.km-form textarea {
+  width: 100%;
+  border: 1px solid rgba(28, 22, 18, 0.16);
+  background: #fffdf8;
+  border-radius: 12px;
+  padding: 14px 14px;
+  font-size: 16px;
+  color: var(--km-ink);
+}
+
+.km-form textarea {
+  resize: vertical;
+  min-height: 112px;
+}
+
+.km-mail {
+  margin: 18px 0 0;
+  display: grid;
+  gap: 4px;
+  font-size: 0.92rem;
+}
+
+.km-mail a {
+  color: var(--km-ember-deep);
+}
+
+.km-footer {
+  padding-bottom: 24px;
+  color: var(--km-muted);
+}
+
+.km-follow-label {
+  margin: 0 0 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  color: var(--km-ember);
+}
+
+.km-social {
+  display: grid;
+  gap: 8px;
+}
+
+.km-social a {
+  text-decoration: none;
+}
+
+.km-rights,
+.km-demo {
+  font-size: 0.78rem;
+}
+
+.km-rights {
+  margin: 22px 0 6px;
+  color: var(--km-cream);
+}
+
+.km-demo {
+  margin: 0;
+  max-width: 22rem;
+  line-height: 1.4;
+}
+
+.km-dock {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: min(100%, 430px);
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, rgba(7, 6, 5, 0.96), rgba(7, 6, 5, 0.84));
+  z-index: 15;
+}
+
+@media (min-width: 720px) {
+  .km-ambient {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background:
+      linear-gradient(rgba(7, 6, 5, 0.78), rgba(7, 6, 5, 0.9)),
+      url('/kveikjumeld/firepit-portrait.jpg') center / cover;
+    filter: blur(22px);
+    transform: scale(1.06);
+  }
+
+  .km-phone {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04);
+  }
+}

@@ -2,6 +2,16 @@
 
 Personal CV website built with React, TypeScript, and Vite. The editable source of truth is [`data/cv.json`](data/cv.json). `src/data/cv.ts` is generated from that file and should not be edited by hand.
 
+## Kveikjumeld redesign (local)
+
+A mobile-first redesign of [kveikjumeld.is](https://kveikjumeld.is) lives at `/kveikjumeld/`. It is a local preview only.
+
+```bash
+npm run dev:kveikjumeld
+```
+
+Or open `http://localhost:5173/kveikjumeld/` while the CV site is running.
+
 ## Customize
 
 Edit [`data/cv.json`](data/cv.json), then regenerate and run:
