@@ -56,8 +56,53 @@ export type SiteSettings = {
   colorScheme: 'light' | 'dark'
 }`
 
+export const OPTIMIZED_UPLOAD_URLS = {
+  '/uploads/chatgpt-image-jun-3-2026-12-50-15-am-21b510bf.png': '/images/projects/shamba/cover.jpg',
+  '/uploads/chatgpt-image-jun-3-2026-01-26-14-pm-502a6b1b.png': '/images/projects/shamba/01.jpg',
+  '/uploads/chatgpt-image-jun-3-2026-12-12-25-am-e5b52f50.png': '/images/projects/shamba/02.jpg',
+  '/uploads/chatgpt-image-jun-3-2026-12-12-25-am2-a94e039a.png': '/images/projects/shamba/03.jpg',
+  '/uploads/chatgpt-image-jun-3-2026-12-50-15-am-e3f55bce.png': '/images/projects/shamba/04.jpg',
+  '/uploads/chatgpt-image-jun-4-2026-02-57-12-pm-404e7a05.png': '/images/projects/shamba/05.jpg',
+  '/uploads/a-clean-high-end-product-mockup-advertis-63fdd2c6.png': '/images/projects/hringr/cover.jpg',
+  '/uploads/a-clean-commercial-product-poster-lookbo-05f5aec3.png': '/images/projects/hringr/01.jpg',
+  '/uploads/a-clean-product-mockup-catalog-style-com-68163eb6.png': '/images/projects/hringr/02.jpg',
+  '/uploads/a-clean-professional-product-tech-pack-c-b03ed1a4.png': '/images/projects/hringr/03.jpg',
+  '/uploads/a-clean-technical-product-specification--8f3ce273.png': '/images/projects/hringr/04.jpg',
+  '/uploads/a-detailed-product-design-spec-tech-pack-432d569a.png': '/images/projects/hringr/05.jpg',
+  '/uploads/a-digital-photograph-features-a-black-ho-347305df.png': '/images/projects/hringr/06.jpg',
+  '/uploads/a-digital-photograph-showcases-the-back--b9c74977.png': '/images/projects/hringr/07.jpg',
+  '/uploads/a-gritty-vintage-styled-skatewear-advert-2ec24d0c.png': '/images/projects/hringr/08.jpg',
+  '/uploads/a-high-quality-product-promotional-poste-253353b7.png': '/images/projects/hringr/09.jpg',
+  '/uploads/a-studio-fashion-photoshoot-scene-with-a-df51a058.png': '/images/projects/hringr/10.jpg',
+  '/uploads/a-studio-fashion-portrait-scene-a-young--6c0128f5.png': '/images/projects/hringr/11.jpg',
+  '/uploads/wide-outdoor-action-photograph-of-a-skat-3a0dba20.png': '/images/projects/hringr/12.jpg',
+}
+
+export function rewriteOptimizedImageUrls(data) {
+  if (!data || !Array.isArray(data.projects)) return false
+  let changed = false
+  for (const project of data.projects) {
+    const nextCover = OPTIMIZED_UPLOAD_URLS[project.cover]
+    if (nextCover && nextCover !== project.cover) {
+      project.cover = nextCover
+      changed = true
+    }
+    if (!Array.isArray(project.images)) continue
+    project.images = project.images.map((src) => {
+      const next = OPTIMIZED_UPLOAD_URLS[src]
+      if (next && next !== src) {
+        changed = true
+        return next
+      }
+      return src
+    })
+  }
+  return changed
+}
+
 function toPublicCv(data) {
   const clone = structuredClone(data)
+  rewriteOptimizedImageUrls(clone)
   if (Array.isArray(clone.certifications)) {
     clone.certifications = clone.certifications.filter(
       (cert) => cert.status === 'done' || cert.status === 'doing'

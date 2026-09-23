@@ -386,13 +386,47 @@ export const cv = {
       "description": "Branding, product and digital marketing project for a skincare brand inspired by Kenyan heritage.",
       "url": "",
       "tech": "Branding, Photoshop, Product Development, Digital Marketing",
-      "cover": "",
+      "cover": "/images/projects/shamba/cover.jpg",
       "logo": "",
       "featured": false,
-      "images": [],
+      "images": [
+        "/images/projects/shamba/01.jpg",
+        "/images/projects/shamba/02.jpg",
+        "/images/projects/shamba/03.jpg",
+        "/images/projects/shamba/04.jpg",
+        "/images/projects/shamba/05.jpg"
+      ],
       "locales": {
         "is": {
           "description": "Vörumerkjagerð, vöruþróun og stafræn markaðssetning fyrir húðvörumerki innblásið af kenýskri arfleifð."
+        }
+      }
+    },
+    {
+      "name": "HRINGR",
+      "description": "HRINGR is premium functional streetwear designed to make everyday life simpler. Built with thoughtful features, heavyweight materials and a distinctive signature pattern, HRINGR combines comfort, practicality and modern streetwear style — with less to think about.",
+      "url": "https://hringr.steiniemils.com",
+      "tech": "",
+      "cover": "/images/projects/hringr/cover.jpg",
+      "logo": "",
+      "featured": false,
+      "images": [
+        "/images/projects/hringr/01.jpg",
+        "/images/projects/hringr/02.jpg",
+        "/images/projects/hringr/03.jpg",
+        "/images/projects/hringr/04.jpg",
+        "/images/projects/hringr/05.jpg",
+        "/images/projects/hringr/06.jpg",
+        "/images/projects/hringr/07.jpg",
+        "/images/projects/hringr/08.jpg",
+        "/images/projects/hringr/09.jpg",
+        "/images/projects/hringr/10.jpg",
+        "/images/projects/hringr/11.jpg",
+        "/images/projects/hringr/12.jpg"
+      ],
+      "locales": {
+        "is": {
+          "description": "HRINGR er vandaður og hagnýtur fatnaður fyrir hversdagslífið, hannaður til að einfalda daginn. Með úthugsuðum eiginleikum, þungum gæðaefnum og áberandi einkamynstri sameinar HRINGR þægindi, notagildi og nútímalegan götustíl — með minna að hugsa um."
         }
       }
     },

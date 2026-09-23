@@ -4,8 +4,9 @@ import express from 'express'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { generateCv } from '../scripts/generate-cv.js'
+import { generateCv, rewriteOptimizedImageUrls } from '../scripts/generate-cv.js'
 import { createAnalytics } from './analytics.js'
+import { optimizeUploadImage } from './optimize-upload.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.join(__dirname, '..')
@@ -354,10 +355,11 @@ function ensureUploadsDir() {
   fs.mkdirSync(uploadsDir, { recursive: true })
 }
 
-function safeUploadName(original) {
-  const ext = path.extname(String(original || '')).toLowerCase()
-  if (!ALLOWED_UPLOAD_EXTS.has(ext)) return null
-  const base = path.basename(String(original), ext)
+function safeUploadName(original, ext) {
+  const incoming = path.extname(String(original || '')).toLowerCase()
+  if (!ALLOWED_UPLOAD_EXTS.has(incoming)) return null
+  if (ext !== '.jpg' && ext !== '.webp') return null
+  const base = path.basename(String(original), incoming)
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
@@ -437,6 +439,9 @@ function ensureDataFile() {
       }
     }
   }
+  if (rewriteOptimizedImageUrls(current)) {
+    added.push('optimized-images')
+  }
   if (!current.settings || typeof current.settings !== 'object') {
     current.settings = seed.settings || { appearance: 'default', colorScheme: 'light' }
     added.push('settings')
@@ -497,11 +502,10 @@ app.get('/api/cv', apiAuth, (req, res) => {
   }
 })
 
-app.post('/api/upload', apiAuth, express.raw({ type: () => true, limit: '8mb' }), (req, res) => {
+app.post('/api/upload', apiAuth, express.raw({ type: () => true, limit: '8mb' }), async (req, res) => {
   try {
-    ensureUploadsDir()
-    const name = safeUploadName(req.query.filename)
-    if (!name) {
+    const incomingExt = path.extname(String(req.query.filename || '')).toLowerCase()
+    if (!ALLOWED_UPLOAD_EXTS.has(incomingExt)) {
       res.status(400).json({ error: 'Use a JPG, PNG, WebP, or GIF image.' })
       return
     }
@@ -509,7 +513,23 @@ app.post('/api/upload', apiAuth, express.raw({ type: () => true, limit: '8mb' })
       res.status(400).json({ error: 'Empty file' })
       return
     }
-    fs.writeFileSync(path.join(uploadsDir, name), req.body)
+
+    let optimized
+    try {
+      optimized = await optimizeUploadImage(req.body)
+    } catch {
+      res.status(400).json({ error: 'Could not read that image.' })
+      return
+    }
+
+    const name = safeUploadName(req.query.filename, optimized.ext)
+    if (!name) {
+      res.status(400).json({ error: 'Use a JPG, PNG, WebP, or GIF image.' })
+      return
+    }
+
+    ensureUploadsDir()
+    fs.writeFileSync(path.join(uploadsDir, name), optimized.buffer)
     res.json({ url: `/uploads/${name}` })
   } catch (err) {
     res.status(500).json({ error: err.message })
