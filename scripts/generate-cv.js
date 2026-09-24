@@ -54,6 +54,18 @@ export type Certification = {
 export type SiteSettings = {
   appearance: 'default' | 'paper'
   colorScheme: 'light' | 'dark'
+}
+
+export type PrivacySection = {
+  heading: string
+  body: string
+  items: string[]
+}
+
+export type Privacy = {
+  title: string
+  updated: string
+  sections: PrivacySection[]
 }`
 
 export const OPTIMIZED_UPLOAD_URLS = {

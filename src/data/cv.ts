@@ -49,6 +49,18 @@ export type SiteSettings = {
   colorScheme: 'light' | 'dark'
 }
 
+export type PrivacySection = {
+  heading: string
+  body: string
+  items: string[]
+}
+
+export type Privacy = {
+  title: string
+  updated: string
+  sections: PrivacySection[]
+}
+
 export const cv = {
   "name": "Þorsteinn Emilsson",
   "title": "Electrician · Developer",
@@ -561,6 +573,108 @@ export const cv = {
       }
     }
   ],
+  "privacy": {
+    "title": "Privacy",
+    "updated": "Last updated 23 September 2026",
+    "sections": [
+      {
+        "heading": "Who is responsible",
+        "body": "This site is the personal CV of {name}. I am the data controller for information this website processes. Contact: {email}. The site is {site}.",
+        "items": [],
+        "locales": {
+          "is": {
+            "heading": "Hver ber ábyrgð",
+            "body": "Þessi vefur er persónuleg ferilskrá {name}. Ég er ábyrgðaraðili persónuupplýsinga sem vefurinn vinnur. Hægt er að hafa samband í {email}. Vefslóðin er {site}."
+          }
+        }
+      },
+      {
+        "heading": "Visit counts",
+        "body": "When you open the homepage, the server records a visit. That does not apply to this privacy page, to bots, or to me when I am logged in to the editor.\n\nThe record includes:",
+        "items": [
+          "date and time",
+          "a short hash of your IP address and browser — not the IP itself",
+          "country, if Cloudflare sends it",
+          "the referring site, if the browser sent one",
+          "whether the visit looks like a phone, tablet, or computer"
+        ],
+        "locales": {
+          "is": {
+            "heading": "Heimsóknir",
+            "body": "Þegar þú opnar forsíðuna skráir vefþjónninn heimsókn. Það gildir ekki um þessa persónuverndarsíðu, ekki um vélmenni (bots) og ekki um mig þegar ég er skráður inn í ritstjóra.\n\nSkráð er:",
+            "items": [
+              "dagsetning og tími",
+              "stutt tætigildi (hash) af IP-tölu og vafra — ekki IP-talan sjálf",
+              "land, ef Cloudflare sendir það",
+              "tilvísunarsíða (referrer), ef vafrinn sendir hana",
+              "hvort heimsóknin lítur út fyrir að vera sími, spjaldtölva eða tölva"
+            ]
+          }
+        }
+      },
+      {
+        "heading": "Why, and for how long",
+        "body": "I use this to see whether people are reading the CV. The data stays on the same server as the site, for up to 90 days, and at most about 5,000 recent visits. I do not sell it, and I do not use Google Analytics or ads.\n\nThe legal basis is legitimate interest (GDPR art. 6(1)(f)): understanding whether the CV is being used.",
+        "items": [],
+        "locales": {
+          "is": {
+            "heading": "Hvers vegna og hversu lengi",
+            "body": "Ég nota þetta til að sjá hvort fólk les ferilskrána. Gögnin eru á sama netþjóni og vefurinn, í allt að 90 daga, og mest um 5.000 nýlegar heimsóknir. Ég sel þau ekki og nota hvorki Google Analytics né auglýsingareki.\n\nVinnslan byggir á lögmætum hagsmunum (6. gr. 1. mgr. f-liður GDPR / lög nr. 90/2018): að vita hvort ferilskráin er í notkun."
+          }
+        }
+      },
+      {
+        "heading": "Cookies and preferences",
+        "body": "Visitors do not get tracking cookies. If you switch language or light/dark mode, that choice is saved in your browser (localStorage) and is not sent to me.\n\nIf I sign in to the editor, the site sets an httpOnly cookie named cv_session for up to 7 days so I stay logged in. Visitors do not get that cookie.",
+        "items": [],
+        "locales": {
+          "is": {
+            "heading": "Vafrakökur og stillingar",
+            "body": "Gestir fá engar vafrakökur (cookies) til raktar. Ef þú skiptir um tungumál eða ljóst/dökkt útlit er það vistað í vafranum þínum (localStorage) og fer ekki til mín.\n\nEf ég skrái mig inn í ritstjóra setur vefurinn httpOnly-köku sem heitir cv_session í allt að 7 daga svo innskráning haldist. Gestir fá hana ekki."
+          }
+        }
+      },
+      {
+        "heading": "Hosting",
+        "body": "The site is self-hosted (Docker / Coolify) and may sit behind Cloudflare. Those operators may keep ordinary access logs as part of running a server.",
+        "items": [],
+        "locales": {
+          "is": {
+            "heading": "Hýsing",
+            "body": "Vefurinn er sjálfshýstur (Docker / Coolify) og getur legið bak við Cloudflare. Þeir aðilar kunna að halda venjulegum aðgangslogum sem hluta af rekstri netþjóns."
+          }
+        }
+      },
+      {
+        "heading": "Other people on the page",
+        "body": "The CV lists professional references by name, role, and company only — not phone or email. Project images are my work or used with permission.",
+        "items": [],
+        "locales": {
+          "is": {
+            "heading": "Annað fólk á síðunni",
+            "body": "Ferilskráin birtir nöfn, hlutverk og vinnustaði meðmælenda, ekki síma eða netfang. Verkefnamyndir eru mínar eða notaðar með leyfi."
+          }
+        }
+      },
+      {
+        "heading": "Your rights",
+        "body": "You can ask for access, correction, or deletion of personal data I hold about you, and you can complain to the Icelandic DPA, Persónuvernd (personuvernd.is). Email {email}.",
+        "items": [],
+        "locales": {
+          "is": {
+            "heading": "Réttindi",
+            "body": "Þú getur óskað eftir aðgangi, leiðréttingu eða eyðingu persónuupplýsinga sem ég varðveiti um þig, og kvartað til Persónuverndar (personuvernd.is). Sendu línu á {email}."
+          }
+        }
+      }
+    ],
+    "locales": {
+      "is": {
+        "title": "Persónuvernd",
+        "updated": "Síðast uppfært 23. september 2026"
+      }
+    }
+  },
   "settings": {
     "appearance": "default",
     "colorScheme": "light"

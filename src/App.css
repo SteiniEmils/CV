@@ -336,6 +336,31 @@
   line-height: 1.7;
 }
 
+.cv-privacy {
+  max-width: 760px;
+}
+
+.cv-privacy h2 {
+  margin: 28px 0 12px;
+  font-size: 1.05rem;
+}
+
+.cv-privacy ul {
+  margin: 0 0 16px;
+  padding-left: 1.2em;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.cv-privacy li + li {
+  margin-top: 6px;
+}
+
+.cv-privacy-updated {
+  margin: -8px 0 8px !important;
+  font-size: 0.85rem;
+}
+
 .cv-link {
   display: inline-flex;
   align-items: center;
@@ -819,6 +844,20 @@
   font-size: 0.9rem;
 }
 
+.cv-footer-legal {
+  margin: 12px 0 0;
+}
+
+.cv-footer-legal a {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.cv-footer-legal a:hover {
+  color: var(--accent);
+}
+
 .cv-footer-contact h3 {
   margin: 0 0 18px;
   font-size: 0.8rem;
@@ -1083,6 +1122,7 @@ html[data-appearance='paper'] .cv-logo-mark {
   .cv-lang-toggle,
   .cv-menu-toggle,
   .cv-link,
+  .cv-footer-legal,
   .cv-project-media,
   .cv-project-thumbs {
     display: none !important;

@@ -446,6 +446,15 @@ function ensureDataFile() {
     current.settings = seed.settings || { appearance: 'default', colorScheme: 'light' }
     added.push('settings')
   }
+  if (!current.privacy || typeof current.privacy !== 'object') {
+    current.privacy = seed.privacy || {
+      title: 'Privacy',
+      updated: '',
+      sections: [],
+      locales: { is: { title: 'Persónuvernd', updated: '' } },
+    }
+    added.push('privacy')
+  }
   if (added.length === 0) return
   atomicWriteFile(dataPath, JSON.stringify(current, null, 2) + '\n')
   console.log('Merged missing fields from seed into data/cv.json:', added.join(', '))
@@ -607,7 +616,7 @@ app.use((req, res, next) => {
 
 app.use(express.static(distDir))
 
-app.get('/', (req, res, next) => {
+function sendIndex(_req, res, next) {
   const index = path.join(distDir, 'index.html')
   if (!fs.existsSync(index)) {
     res.status(503).type('text/plain').send('Site build is unavailable.')
@@ -616,7 +625,10 @@ app.get('/', (req, res, next) => {
   res.sendFile(index, (err) => {
     if (err) next(err)
   })
-})
+}
+
+app.get('/privacy', sendIndex)
+app.get('/', sendIndex)
 
 const PORT = process.env.PORT || 3000
 

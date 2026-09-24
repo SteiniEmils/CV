@@ -452,6 +452,7 @@
       <a href="#sec-visitors">Visitors</a>
       <a href="#sec-appearance">Appearance</a>
       <a href="#sec-basics">Basics</a>
+      <a href="#sec-privacy">Privacy</a>
       <a href="#sec-skills">Skills</a>
       <a href="#sec-skill-categories">Categories</a>
       <a href="#sec-experience">Experience</a>
@@ -550,6 +551,33 @@
         </div>
       </section>
 
+      <section id="sec-privacy">
+        <h2>Privacy page</h2>
+        <p class="hint" style="margin:-8px 0 18px">Public page at /privacy. Blank lines start a new paragraph. Optional bullets are one per line. You can use {name}, {email}, and {site} — they fill from Basics.</p>
+        <div class="pair">
+          <div class="field">
+            <label for="privacy-title">Page title <span class="lang-tag">EN</span></label>
+            <input id="privacy-title" data-privacy="title">
+          </div>
+          <div class="field">
+            <label for="privacy-title-is">Page title <span class="lang-tag">IS</span></label>
+            <input id="privacy-title-is" data-privacy-locale="title">
+          </div>
+        </div>
+        <div class="pair" style="margin-top:16px">
+          <div class="field">
+            <label for="privacy-updated">Updated line <span class="lang-tag">EN</span></label>
+            <input id="privacy-updated" data-privacy="updated">
+          </div>
+          <div class="field">
+            <label for="privacy-updated-is">Updated line <span class="lang-tag">IS</span></label>
+            <input id="privacy-updated-is" data-privacy-locale="updated">
+          </div>
+        </div>
+        <div id="privacySections-list" class="list" style="margin-top:20px"></div>
+        <button type="button" class="secondary add" onclick="addItem('privacySections')">+ Add section</button>
+      </section>
+
       <section id="sec-skills">
         <h2>Skills</h2>
         <div class="pair">
@@ -619,6 +647,26 @@
   </div>
 
   <div id="status"></div>
+
+  <template id="tpl-privacySections">
+    <div class="item">
+      <button type="button" class="danger remove" onclick="removeItem(this)">Remove</button>
+      <div class="item-fields">
+        <div class="pair">
+          <div class="field"><label>Heading <span class="lang-tag">EN</span></label><input type="text" data-key="heading" oninput="update(this)"></div>
+          <div class="field"><label>Heading <span class="lang-tag">IS</span></label><input type="text" data-key="heading" data-locale="is" oninput="update(this)"></div>
+        </div>
+        <div class="pair">
+          <div class="field"><label>Text <span class="lang-tag">EN</span></label><textarea data-key="body" oninput="update(this)"></textarea><p class="hint">Blank line = new paragraph.</p></div>
+          <div class="field"><label>Text <span class="lang-tag">IS</span></label><textarea data-key="body" data-locale="is" oninput="update(this)"></textarea></div>
+        </div>
+        <div class="pair">
+          <div class="field"><label>Bullets <span class="lang-tag">EN</span></label><textarea data-key="items" oninput="update(this)" placeholder="Optional, one per line"></textarea></div>
+          <div class="field"><label>Bullets <span class="lang-tag">IS</span></label><textarea data-key="items" data-locale="is" oninput="update(this)"></textarea></div>
+        </div>
+      </div>
+    </div>
+  </template>
 
   <template id="tpl-skillCategories">
     <div class="item">
@@ -795,7 +843,32 @@
       projects: { name: '', description: '', url: '', tech: '', cover: '', logo: '', featured: false, images: [], locales: { is: { description: '' } } },
       languages: { name: '', proficiency: '', locales: { is: { name: '', proficiency: '' } } },
       references: { name: '', role: '', company: '', phone: '', email: '', locales: { is: { role: '' } } },
-      stats: { value: '', label: '', locales: { is: { label: '' } } }
+      stats: { value: '', label: '', locales: { is: { label: '' } } },
+      privacySections: { heading: '', body: '', items: '', locales: { is: { heading: '', body: '', items: '' } } }
+    }
+
+    function ensurePrivacy() {
+      if (!data.privacy || typeof data.privacy !== 'object') {
+        data.privacy = {
+          title: 'Privacy',
+          updated: '',
+          sections: [],
+          locales: { is: { title: 'Persónuvernd', updated: '' } },
+        }
+      }
+      if (!Array.isArray(data.privacy.sections)) data.privacy.sections = []
+      ensureIs(data.privacy)
+      return data.privacy
+    }
+
+    function sectionList(section) {
+      if (section === 'privacySections') return ensurePrivacy().sections
+      return data[section]
+    }
+
+    function setSectionList(section, list) {
+      if (section === 'privacySections') ensurePrivacy().sections = list
+      else data[section] = list
     }
 
     function ensureIs(obj) {
@@ -885,6 +958,7 @@
         data.references = data.references || []
         data.stats = data.stats || []
         ensureIs(data)
+        ensurePrivacy()
 
         data.skills = joinList(data.skills)
         data.locales.is.skills = joinList(data.locales.is.skills)
@@ -896,6 +970,10 @@
         data.projects.forEach(p => {
           p.featured = p.featured === true
           p.images = toArray(p.images)
+        })
+        data.privacy.sections.forEach((section) => {
+          section.items = joinLines(section.items)
+          if (section.locales?.is) section.locales.is.items = joinLines(section.locales.is.items)
         })
         ensureSettings()
 
@@ -933,16 +1011,28 @@
         el.value = localeValue(data, el.dataset.localeId)
       })
       renderSettings()
+      renderPrivacyFields()
       Object.keys(schema).forEach(renderSection)
+    }
+
+    function renderPrivacyFields() {
+      const privacy = ensurePrivacy()
+      document.querySelectorAll('[data-privacy]').forEach((el) => {
+        el.value = privacy[el.dataset.privacy] ?? ''
+      })
+      document.querySelectorAll('[data-privacy-locale]').forEach((el) => {
+        el.value = localeValue(privacy, el.dataset.privacyLocale)
+      })
     }
 
     function renderSection(section) {
       const container = document.getElementById(section + '-list')
       const tpl = document.getElementById('tpl-' + section)
       container.innerHTML = ''
-      const total = data[section].length
+      const list = sectionList(section)
+      const total = list.length
 
-      data[section].forEach((item, i) => {
+      list.forEach((item, i) => {
         const el = tpl.content.cloneNode(true).firstElementChild
         el.dataset.section = section
         el.dataset.index = i
@@ -982,11 +1072,12 @@
     function moveItem(btn, delta) {
       const item = btn.closest('.item')
       const section = item.dataset.section
+      const list = sectionList(section)
       const index = parseInt(item.dataset.index, 10)
       const next = index + delta
-      if (next < 0 || next >= data[section].length) return
-      const [moved] = data[section].splice(index, 1)
-      data[section].splice(next, 0, moved)
+      if (next < 0 || next >= list.length) return
+      const [moved] = list.splice(index, 1)
+      list.splice(next, 0, moved)
       renderSection(section)
     }
 
@@ -1031,12 +1122,13 @@
     }
 
     function syncOrder(section) {
-      const list = document.getElementById(section + '-list')
-      const next = [...list.querySelectorAll(':scope > .item')].map((node) => {
-        return data[section][parseInt(node.dataset.index, 10)]
+      const listEl = document.getElementById(section + '-list')
+      const list = sectionList(section)
+      const next = [...listEl.querySelectorAll(':scope > .item')].map((node) => {
+        return list[parseInt(node.dataset.index, 10)]
       })
       if (next.some((item) => item === undefined)) return
-      data[section] = next
+      setSectionList(section, next)
       renderSection(section)
     }
 
@@ -1054,8 +1146,16 @@
         ensureIs(data)[el.dataset.localeId] = el.value
         return
       }
+      if (el.dataset.privacy) {
+        ensurePrivacy()[el.dataset.privacy] = el.value
+        return
+      }
+      if (el.dataset.privacyLocale) {
+        ensureIs(ensurePrivacy())[el.dataset.privacyLocale] = el.value
+        return
+      }
       if (!el.dataset.section) return
-      const item = data[el.dataset.section][parseInt(el.dataset.index, 10)]
+      const item = sectionList(el.dataset.section)[parseInt(el.dataset.index, 10)]
       if (el.dataset.locale) {
         ensureIs(item)[el.dataset.key] = el.value
       } else if (el.type === 'checkbox' && el.dataset.key === 'featured') {
@@ -1074,7 +1174,7 @@
     }
 
     function addItem(section) {
-      data[section].push(JSON.parse(JSON.stringify(schema[section])))
+      sectionList(section).push(JSON.parse(JSON.stringify(schema[section])))
       renderSection(section)
     }
 
@@ -1082,13 +1182,22 @@
       const item = btn.closest('.item')
       const section = item.dataset.section
       const index = parseInt(item.dataset.index, 10)
-      data[section].splice(index, 1)
+      sectionList(section).splice(index, 1)
       renderSection(section)
     }
 
     function toArray(s) {
       if (Array.isArray(s)) return s.map((x) => String(x).trim()).filter(Boolean)
       return String(s || '').split(/[,\n]+/).map(x => x.trim()).filter(Boolean)
+    }
+
+    function joinLines(value) {
+      return Array.isArray(value) ? value.join('\n') : (value ?? '')
+    }
+
+    function toLines(value) {
+      if (Array.isArray(value)) return value.map((x) => String(x).trim()).filter(Boolean)
+      return String(value || '').split(/\n+/).map((x) => x.trim()).filter(Boolean)
     }
 
     function setPreview(itemEl, key, url) {
@@ -1212,6 +1321,18 @@
         p.featured = p.featured === true
         p.images = toArray(p.images)
       })
+      if (!payload.privacy || typeof payload.privacy !== 'object') {
+        payload.privacy = { title: 'Privacy', updated: '', sections: [], locales: { is: { title: 'Persónuvernd', updated: '' } } }
+      }
+      if (!Array.isArray(payload.privacy.sections)) payload.privacy.sections = []
+      payload.privacy.sections.forEach((section) => {
+        section.items = toLines(section.items)
+        if (section.locales?.is) {
+          const items = toLines(section.locales.is.items)
+          if (items.length) section.locales.is.items = items
+          else delete section.locales.is.items
+        }
+      })
       if (!payload.settings || typeof payload.settings !== 'object') {
         payload.settings = { appearance: 'default', colorScheme: 'light' }
       }
@@ -1248,7 +1369,7 @@
       event.preventDefault()
     })
     document.getElementById('editor').addEventListener('input', (event) => {
-      if (event.target.matches('[data-id], [data-locale-id], [data-settings]')) update(event.target)
+      if (event.target.matches('[data-id], [data-locale-id], [data-settings], [data-privacy], [data-privacy-locale]')) update(event.target)
     })
     document.getElementById('editor').addEventListener('change', (event) => {
       if (event.target.matches('[data-settings]')) update(event.target)

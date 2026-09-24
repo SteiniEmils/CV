@@ -10,7 +10,7 @@ import {
   readStoredColorScheme,
   type ColorScheme,
 } from './theme.ts'
-import './App.css'
+import { PrivacyPage } from './Privacy.tsx'
 
 function printCv() {
   const html = document.documentElement
@@ -133,7 +133,15 @@ const MenuIcon = () => (
   </svg>
 )
 
-function Header({ colorScheme, onToggleColorScheme }: { colorScheme: ColorScheme; onToggleColorScheme: () => void }) {
+function Header({
+  colorScheme,
+  onToggleColorScheme,
+  isPrivacy,
+}: {
+  colorScheme: ColorScheme
+  onToggleColorScheme: () => void
+  isPrivacy: boolean
+}) {
   const { lang, setLang, t } = useLanguage()
   const [menuOpen, setMenuOpen] = useState(false)
   const headerRef = useRef<HTMLElement>(null)
@@ -177,7 +185,7 @@ function Header({ colorScheme, onToggleColorScheme }: { colorScheme: ColorScheme
 
   return (
     <header ref={headerRef} className={`cv-header${menuOpen ? ' is-nav-open' : ''}`}>
-      <a href="#" className="cv-logo">
+      <a href={isPrivacy ? '/' : '#'} className="cv-logo">
         <span className="cv-logo-mark">SE</span>
         <span className="cv-logo-name">{cv.name}</span>
       </a>
@@ -185,7 +193,7 @@ function Header({ colorScheme, onToggleColorScheme }: { colorScheme: ColorScheme
         {nav.map((link) => (
           <a
             key={link.id}
-            href={`#${link.id}`}
+            href={isPrivacy ? `/#${link.id}` : `#${link.id}`}
             className="cv-nav-link"
             onClick={() => setMenuOpen(false)}
           >
@@ -618,6 +626,9 @@ function Footer() {
         <div>
           <strong>{cv.name}</strong>
           <p>{t('buildingSolutions')}</p>
+          <p className="cv-footer-legal">
+            <a href="/privacy">{t('privacy')}</a>
+          </p>
         </div>
       </div>
       <div className="cv-footer-contact">
@@ -667,17 +678,24 @@ function Footer() {
 
 function App() {
   const { colorScheme, toggleColorScheme } = useSiteTheme()
+  const isPrivacy = window.location.pathname.replace(/\/+$/, '') === '/privacy'
 
   return (
     <div className="cv-page">
-      <Header colorScheme={colorScheme} onToggleColorScheme={toggleColorScheme} />
+      <Header colorScheme={colorScheme} onToggleColorScheme={toggleColorScheme} isPrivacy={isPrivacy} />
       <main className="cv-main">
-        <Hero />
-        <AboutSkills />
-        <Experience />
-        <Projects />
-        <EducationLanguagesReferences />
-        <Stats />
+        {isPrivacy ? (
+          <PrivacyPage />
+        ) : (
+          <>
+            <Hero />
+            <AboutSkills />
+            <Experience />
+            <Projects />
+            <EducationLanguagesReferences />
+            <Stats />
+          </>
+        )}
       </main>
       <Footer />
     </div>
