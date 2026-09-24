@@ -11,6 +11,7 @@ import {
   type ColorScheme,
 } from './theme.ts'
 import { PrivacyPage } from './Privacy.tsx'
+import './App.css'
 
 function printCv() {
   const html = document.documentElement
